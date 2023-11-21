@@ -1,6 +1,6 @@
 package com.analysis.SalaryStratos.features;
 
-import com.analysis.SalaryStratos.Data.JobValidation;
+import com.analysis.SalaryStratos.models.JobValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,43 +47,31 @@ public class DataValidation {
             jobValidation.setId(job.getId());
 
             //Validate id
-            if(Objects.nonNull(job.getId())){
-                jobValidation.setIsIdValid(validateField(String.valueOf(job.getId()),idRegex,allValid));
-            }else{
-                jobValidation.setIsIdValid(Boolean.FALSE);
-            }
+            jobValidation.setIdValid(validateField(String.valueOf(job.getId()), idRegex, allValid));
 
             //Validate Job Title
-            jobValidation.setIsJobTitleValid(validateField(job.getJobTitle(),jobTitleRegex, allValid));
+            jobValidation.setJobTitleValid(validateField(job.getJobTitle(),jobTitleRegex, allValid));
 
             //Validate Company Name
-            jobValidation.setIsCompanyNameValid(validateField(job.getCompanyName(),companyNameRegex, allValid));
+            jobValidation.setCompanyNameValid(validateField(job.getCompanyName(),companyNameRegex, allValid));
 
             //Validate Link
-            jobValidation.setIsLinkValid(validateField(job.getLink(),linkRegex, allValid));
+            jobValidation.setLinkValid(validateField(job.getLink(),linkRegex, allValid));
 
             //Validate Salary
-            if(Objects.nonNull(job.getSalary())){
-                jobValidation.setIsSalaryValid(validateField(String.valueOf(job.getSalary()),salaryRegex,allValid));
-            }else{
-                jobValidation.setIsSalaryValid(Boolean.FALSE);
-            }
+            jobValidation.setSalaryValid(validateField(String.valueOf(job.getSalary()), salaryRegex, allValid));
 
             //Validate Location
-            jobValidation.setIsLocationValid(validateField(job.getLocation(),locationRegex, allValid));
+            jobValidation.setLocationValid(validateField(job.getLocation(),locationRegex, allValid));
 
             //Validate Experience
-            if(Objects.nonNull(job.getYearsExperience())){
-                jobValidation.setIsYearsExperienceValid(validateField(String.valueOf(job.getYearsExperience()),experienceRegex,allValid));
-            }else{
-                jobValidation.setIsYearsExperienceValid(Boolean.FALSE);
-            }
+            jobValidation.setYearsExperienceValid(validateField(String.valueOf(job.getYearsExperience()), experienceRegex, allValid));
 
             //Validate Skills
-            jobValidation.setIsSkillsValid(validateField(job.getSkills(),skillsRegex, allValid));
+            jobValidation.setSkillsValid(validateField(job.getSkills(),skillsRegex, allValid));
 
             //Validate Description
-            jobValidation.setIsJobDescriptionValid(validateField(job.getJobDescription(),descriptionRegex, allValid));
+            jobValidation.setJobDescriptionValid(validateField(job.getJobDescription(),descriptionRegex, allValid));
 
             jobValidation.setAllFieldsValid(allValid.get());
             jobValidationList.add(jobValidation);

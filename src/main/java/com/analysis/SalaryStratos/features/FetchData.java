@@ -1,6 +1,6 @@
 package com.analysis.SalaryStratos.features;
 
-import com.analysis.SalaryStratos.Data.Job;
+import com.analysis.SalaryStratos.models.Job;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.analysis.SalaryStratos.controllers;
 
-import com.analysis.SalaryStratos.Data.Job;
-import com.analysis.SalaryStratos.Data.JobValidation;
+import com.analysis.SalaryStratos.models.Job;
+import com.analysis.SalaryStratos.models.JobValidation;
 import com.analysis.SalaryStratos.features.DataValidation;
 import com.analysis.SalaryStratos.features.FetchData;
 import org.springframework.beans.factory.annotation.Autowired;
