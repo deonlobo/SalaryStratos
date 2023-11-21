@@ -1,8 +1,5 @@
 package com.analysis.SalaryStratos.models;
 
-import lombok.Data;
-
-@Data
 public class JobValidation {
     private long id;
     private Boolean isIdValid;

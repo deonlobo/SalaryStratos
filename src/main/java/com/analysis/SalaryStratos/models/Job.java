@@ -1,8 +1,5 @@
 package com.analysis.SalaryStratos.models;
 
-import lombok.Data;
-
-@Data
 public class Job {
     private long id;
     private String jobTitle;
