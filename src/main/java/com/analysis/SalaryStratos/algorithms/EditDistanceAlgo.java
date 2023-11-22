@@ -1,4 +1,4 @@
-package com.analysis.SalaryStratos;
+package com.analysis.SalaryStratos.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
