@@ -1,15 +1,16 @@
 package com.analysis.SalaryStratos.dataStructures.trie;
 
-public class Trie {
+public class TrieDS {
     TrieDS_Node root = new TrieDS_Node();
     int myHashCode = 0;
     
     public void add(String word) {
         TrieDS_Node p = root;
         for (char c : word.toCharArray()) {
-            if (p.nodes[c-'a'] == null)
-                p.nodes[c-'a'] = new TrieDS_Node();
-            p = p.nodes[c-'a'];
+            int numericValue = c - 'a';
+            if (p.nodes[numericValue] == null)
+                p.nodes[numericValue] = new TrieDS_Node();
+            p = p.nodes[numericValue];
         }
         myHashCode +=word.hashCode();
         p.incrementFrequency();
@@ -62,9 +63,9 @@ public class Trie {
         char[] wordArray = new char[50];
         StringBuilder sb = new StringBuilder();
         printAllWords(root, wordArray, 0, sb);
-        if(sb.toString().length()==0)
+        if(sb.toString().isEmpty())
             return "";
-        return sb.toString().substring(1);
+        return sb.substring(1);
     }
 
     private void printAllWords(TrieDS_Node root, char[] wordArray, int pos, StringBuilder sb) {
@@ -91,8 +92,7 @@ public class Trie {
 
     @Override
     public boolean equals(Object o){
-        if(o instanceof Trie) {
-            Trie s = (Trie) o;
+        if(o instanceof TrieDS s) {
             if(this.getNodeCount() != s.getNodeCount())
                 return false;
             if(this.getWordCount() != s.getWordCount())
@@ -103,10 +103,10 @@ public class Trie {
         }
     }
 
-    private boolean compareTrie(Trie p, Trie q) {
+    private boolean compareTrie(TrieDS p, TrieDS q) {
         String s1 = p.toString();
         String s2 = q.toString();
-        if(s1.equals("") && s2.equals(""))
+        if(s1.isEmpty() && s2.isEmpty())
             return true;
         String[] strs1 = s1.split("\n");
         String[] strs2= s2.split("\n");
@@ -115,7 +115,7 @@ public class Trie {
         for(String s: strs1) {
             TrieDS_Node node1 = p.find(s);
             TrieDS_Node node2 = q.find(s);
-            if(node1.getValue()!=node2.getValue())
+            if(node1.getFrequency()!=node2.getFrequency())
                 return false;
         }
         return true;
