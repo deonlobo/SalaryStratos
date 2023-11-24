@@ -2,15 +2,15 @@ package com.analysis.SalaryStratos.models;
 
 public class JobValidation {
     private long id;
-    private Boolean isIdValid;
-    private Boolean isJobTitleValid;
-    private Boolean isCompanyNameValid;
-    private Boolean isLinkValid;
-    private Boolean isSalaryValid;
-    private Boolean isLocationValid;
-    private Boolean isYearsExperienceValid;
-    private Boolean isSkillsValid;
-    private Boolean isJobDescriptionValid;
+    private Boolean jobTitle;
+    private Boolean companyName;
+    private Boolean jobWebsiteName;
+    private Boolean jobWebsiteLink;
+    private Boolean minSalary;
+    private Boolean maxSalary;
+    private Boolean location;
+    private Boolean jobDescription;
+
     private Boolean allFieldsValid;
 
     public long getId() {
@@ -21,76 +21,68 @@ public class JobValidation {
         this.id = id;
     }
 
-    public Boolean getIdValid() {
-        return isIdValid;
+    public Boolean getJobTitle() {
+        return jobTitle;
     }
 
-    public void setIdValid(Boolean idValid) {
-        isIdValid = idValid;
+    public void setJobTitle(Boolean jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
-    public Boolean getJobTitleValid() {
-        return isJobTitleValid;
+    public Boolean getCompanyName() {
+        return companyName;
     }
 
-    public void setJobTitleValid(Boolean jobTitleValid) {
-        isJobTitleValid = jobTitleValid;
+    public void setCompanyName(Boolean companyName) {
+        this.companyName = companyName;
     }
 
-    public Boolean getCompanyNameValid() {
-        return isCompanyNameValid;
+    public Boolean getJobWebsiteName() {
+        return jobWebsiteName;
     }
 
-    public void setCompanyNameValid(Boolean companyNameValid) {
-        isCompanyNameValid = companyNameValid;
+    public void setJobWebsiteName(Boolean jobWebsiteName) {
+        this.jobWebsiteName = jobWebsiteName;
     }
 
-    public Boolean getLinkValid() {
-        return isLinkValid;
+    public Boolean getJobWebsiteLink() {
+        return jobWebsiteLink;
     }
 
-    public void setLinkValid(Boolean linkValid) {
-        isLinkValid = linkValid;
+    public void setJobWebsiteLink(Boolean jobWebsiteLink) {
+        this.jobWebsiteLink = jobWebsiteLink;
     }
 
-    public Boolean getSalaryValid() {
-        return isSalaryValid;
+    public Boolean getMinSalary() {
+        return minSalary;
     }
 
-    public void setSalaryValid(Boolean salaryValid) {
-        isSalaryValid = salaryValid;
+    public void setMinSalary(Boolean minSalary) {
+        this.minSalary = minSalary;
     }
 
-    public Boolean getLocationValid() {
-        return isLocationValid;
+    public Boolean getMaxSalary() {
+        return maxSalary;
     }
 
-    public void setLocationValid(Boolean locationValid) {
-        isLocationValid = locationValid;
+    public void setMaxSalary(Boolean maxSalary) {
+        this.maxSalary = maxSalary;
     }
 
-    public Boolean getYearsExperienceValid() {
-        return isYearsExperienceValid;
+    public Boolean getLocation() {
+        return location;
     }
 
-    public void setYearsExperienceValid(Boolean yearsExperienceValid) {
-        isYearsExperienceValid = yearsExperienceValid;
+    public void setLocation(Boolean location) {
+        this.location = location;
     }
 
-    public Boolean getSkillsValid() {
-        return isSkillsValid;
+    public Boolean getJobDescription() {
+        return jobDescription;
     }
 
-    public void setSkillsValid(Boolean skillsValid) {
-        isSkillsValid = skillsValid;
-    }
-
-    public Boolean getJobDescriptionValid() {
-        return isJobDescriptionValid;
-    }
-
-    public void setJobDescriptionValid(Boolean jobDescriptionValid) {
-        isJobDescriptionValid = jobDescriptionValid;
+    public void setJobDescription(Boolean jobDescription) {
+        this.jobDescription = jobDescription;
     }
 
     public Boolean getAllFieldsValid() {

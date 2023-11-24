@@ -22,8 +22,6 @@ public class DataValidation {
     //Data validation using regular expression
     public List<JobValidation> validateScrapedData(){
         List<JobValidation> jobValidationList = new ArrayList<>();
-        //Validate the ID field, ensuring it's a positive integer.
-        String idRegex = "^[1-9]\\d*$";
         //Make sure that they contain only letters and spaces.
         String jobTitleRegex = "^[A-Za-z\\s]+$";
         //Validate that company names consist of letters, spaces, &, ,
@@ -34,10 +32,6 @@ public class DataValidation {
         String salaryRegex = "^[1-9]\\d*$";
         //Ensure that locations contain anything other than !@#$%^&*+={}[]|\/'"?<>
         String locationRegex = "^[^!@#$%^&*+={}\\[\\]|\\\\/'\"?<>]+$";
-        //Experience format ensure it's > 0
-        String experienceRegex = "^[0-9]\\d*$";
-        //Ensure that skills contain anything other than !@#$%^&*+={}[]|\/'"?<>
-        String skillsRegex = "^[^!@#$%^&*+={}\\[\\]|\\\\/'\"?<>]+$";
         //Ensure there are at least 10 words (one or more non-whitespace characters followed by zero or more whitespace characters){10,}
         String descriptionRegex = "(\\S+\\s*){10,}";
 
@@ -46,32 +40,26 @@ public class DataValidation {
             AtomicBoolean allValid = new AtomicBoolean(true);
             jobValidation.setId(job.getId());
 
-            //Validate id
-            jobValidation.setIdValid(validateField(String.valueOf(job.getId()), idRegex, allValid));
 
             //Validate Job Title
-            jobValidation.setJobTitleValid(validateField(job.getJobTitle(),jobTitleRegex, allValid));
+            jobValidation.setJobTitle(validateField(job.getJobTitle(),jobTitleRegex, allValid));
 
             //Validate Company Name
-            jobValidation.setCompanyNameValid(validateField(job.getCompanyName(),companyNameRegex, allValid));
+            jobValidation.setCompanyName(validateField(job.getCompanyName(),companyNameRegex, allValid));
 
             //Validate Link
-            jobValidation.setLinkValid(validateField(job.getLink(),linkRegex, allValid));
+            jobValidation.setJobWebsiteLink(validateField(job.getJobWebsiteLink(),linkRegex, allValid));
 
             //Validate Salary
-            jobValidation.setSalaryValid(validateField(String.valueOf(job.getSalary()), salaryRegex, allValid));
+            jobValidation.setMinSalary(validateField(String.valueOf(job.getMinSalary()), salaryRegex, allValid));
+
+            jobValidation.setMaxSalary(validateField(String.valueOf(job.getMaxSalary()), salaryRegex, allValid));
 
             //Validate Location
-            jobValidation.setLocationValid(validateField(job.getLocation(),locationRegex, allValid));
-
-            //Validate Experience
-            jobValidation.setYearsExperienceValid(validateField(String.valueOf(job.getYearsExperience()), experienceRegex, allValid));
-
-            //Validate Skills
-            jobValidation.setSkillsValid(validateField(job.getSkills(),skillsRegex, allValid));
+            jobValidation.setLocation(validateField(job.getLocation(),locationRegex, allValid));
 
             //Validate Description
-            jobValidation.setJobDescriptionValid(validateField(job.getJobDescription(),descriptionRegex, allValid));
+            jobValidation.setJobDescription(validateField(job.getJobDescription(),descriptionRegex, allValid));
 
             jobValidation.setAllFieldsValid(allValid.get());
             jobValidationList.add(jobValidation);

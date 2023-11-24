@@ -4,14 +4,11 @@ public class Job {
     private long id;
     private String jobTitle;
     private String companyName;
-    private String link;
-    private int salary;
-    private String location;
     private String jobWebsiteName;
-    private String industry;
-    private int yearsExperience;
-    private String educationLevel;
-    private String skills;
+    private String jobWebsiteLink;
+    private int minSalary;
+    private int maxSalary;
+    private String location;
     private String jobDescription;
 
     public long getId() {
@@ -38,30 +35,6 @@ public class Job {
         this.companyName = companyName;
     }
 
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public int getSalary() {
-        return salary;
-    }
-
-    public void setSalary(int salary) {
-        this.salary = salary;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public String getJobWebsiteName() {
         return jobWebsiteName;
     }
@@ -70,36 +43,36 @@ public class Job {
         this.jobWebsiteName = jobWebsiteName;
     }
 
-    public String getIndustry() {
-        return industry;
+    public String getJobWebsiteLink() {
+        return jobWebsiteLink;
     }
 
-    public void setIndustry(String industry) {
-        this.industry = industry;
+    public void setJobWebsiteLink(String jobWebsiteLink) {
+        this.jobWebsiteLink = jobWebsiteLink;
     }
 
-    public int getYearsExperience() {
-        return yearsExperience;
+    public int getMinSalary() {
+        return minSalary;
     }
 
-    public void setYearsExperience(int yearsExperience) {
-        this.yearsExperience = yearsExperience;
+    public void setMinSalary(int minSalary) {
+        this.minSalary = minSalary;
     }
 
-    public String getEducationLevel() {
-        return educationLevel;
+    public int getMaxSalary() {
+        return maxSalary;
     }
 
-    public void setEducationLevel(String educationLevel) {
-        this.educationLevel = educationLevel;
+    public void setMaxSalary(int maxSalary) {
+        this.maxSalary = maxSalary;
     }
 
-    public String getSkills() {
-        return skills;
+    public String getLocation() {
+        return location;
     }
 
-    public void setSkills(String skills) {
-        this.skills = skills;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getJobDescription() {

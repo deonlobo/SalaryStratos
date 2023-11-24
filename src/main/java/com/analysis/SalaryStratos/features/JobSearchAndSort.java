@@ -34,7 +34,7 @@ public class JobSearchAndSort {
                 .collect(Collectors.toList());
 
         // Sort matching jobs in descending order based on salary
-        matchingJobs.sort(Comparator.comparingInt(Job::getSalary).reversed());
+        matchingJobs.sort(Comparator.comparingInt(Job::getMinSalary).reversed());
 
         //Update SearchFrequency
         searchFrequency.updateSearchFrequency(searchTerm);
