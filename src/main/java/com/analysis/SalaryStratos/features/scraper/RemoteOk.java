@@ -7,17 +7,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,35 +34,43 @@ public class RemoteOk {
 
             scraperBot.get(websiteUrl);
 
+            try {
                 // Locate the input element using its class name
                 WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("search")));
                 // Enter "React" into the input field
                 searchInput.sendKeys(title);
                 Thread.sleep(2000);
 
-            // Find the div element
-            WebElement filterResultsDiv = scraperBot.findElement(By.className("search-filter-results"));
-            // Check if the div is not empty
-            if (filterResultsDiv.getText().trim().isEmpty()) {
-                System.out.println("this title is not there "+title);
+                // Find the div element
+                WebElement filterResultsDiv = scraperBot.findElement(By.className("search-filter-results"));
+                // Check if the div is not empty
+                if (filterResultsDiv.getText().trim().isEmpty()) {
+                    System.out.println("this title is not there "+title);
+                    // Close the browser window
+                    scraperBot.quit();
+                    continue;
+                }
+
+                // Press Enter using the Keys.ENTER constant from the Keys class
+                searchInput.sendKeys(Keys.ENTER);
+                Thread.sleep(2000);
+                // Print the source code of the new website
+                String pageSource = scraperBot.getPageSource();
+
                 // Close the browser window
+                scraperBot.quit();
+
+                //System.out.println("Page Source:\n" + pageSource);
+                List<Job> validatedJobList = jsoupExtractor(pageSource);
+
+                FetchAndUpdateData.appendListToJson(validatedJobList);
+            }catch (NoSuchElementException | TimeoutException e) {
+                // Close the browser window and continue to the next loop if it fails
                 scraperBot.quit();
                 continue;
             }
 
-            // Press Enter using the Keys.ENTER constant from the Keys class
-            searchInput.sendKeys(Keys.ENTER);
-            Thread.sleep(2000);
-            // Print the source code of the new website
-            String pageSource = scraperBot.getPageSource();
 
-            // Close the browser window
-            scraperBot.quit();
-
-            //System.out.println("Page Source:\n" + pageSource);
-            List<Job> validatedJobList = jsoupExtractor(pageSource);
-
-            FetchAndUpdateData.appendListToJson(validatedJobList);
         }
 
 
