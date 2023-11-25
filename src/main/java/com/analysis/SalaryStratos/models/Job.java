@@ -1,7 +1,7 @@
 package com.analysis.SalaryStratos.models;
 
 public class Job {
-    private long id;
+    private String id;
     private String jobTitle;
     private String companyName;
     private String jobWebsiteName;
@@ -11,11 +11,11 @@ public class Job {
     private String location;
     private String jobDescription;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
