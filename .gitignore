@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+######## ignore json
+src/main/resources/database.json

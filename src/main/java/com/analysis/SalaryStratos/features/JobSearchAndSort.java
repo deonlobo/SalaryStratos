@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 public class JobSearchAndSort {
 
     @Autowired
-    private final FetchData jobService;
+    private final FetchAndUpdateData jobService;
     @Autowired
     private final SearchFrequency searchFrequency;
 
-    public JobSearchAndSort(FetchData jobService, SearchFrequency searchFrequency) {
+    public JobSearchAndSort(FetchAndUpdateData jobService, SearchFrequency searchFrequency) {
         this.jobService = jobService;
         this.searchFrequency = searchFrequency;
     }

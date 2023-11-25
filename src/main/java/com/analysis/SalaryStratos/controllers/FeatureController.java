@@ -5,7 +5,7 @@ import com.analysis.SalaryStratos.features.SearchFrequency;
 import com.analysis.SalaryStratos.models.Job;
 import com.analysis.SalaryStratos.models.JobValidation;
 import com.analysis.SalaryStratos.features.DataValidation;
-import com.analysis.SalaryStratos.features.FetchData;
+import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.Map;
 @Controller
 public class FeatureController {
     @Autowired
-    private final FetchData jobService;
+    private final FetchAndUpdateData jobService;
     @Autowired
     private final DataValidation dataValidation;
     @Autowired
@@ -24,7 +24,7 @@ public class FeatureController {
     @Autowired
     private final SearchFrequency searchFrequency;
 
-    public FeatureController(FetchData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency) {
+    public FeatureController(FetchAndUpdateData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency) {
         this.jobService = jobService;
         this.dataValidation = dataValidation;
         this.jobSearchAndSort = jobSearchAndSort;
