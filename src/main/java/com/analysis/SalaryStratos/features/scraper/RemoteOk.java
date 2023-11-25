@@ -160,7 +160,7 @@ public class RemoteOk {
                 job.setJobDescription(markdownText);
             }
 
-            job.setId(Integer.parseInt(dataId));
+            job.setId(dataId);
 
             if(DataValidation.validateDataForOneObject(job)){
                 jobList.add(job);

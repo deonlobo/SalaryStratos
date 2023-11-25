@@ -15,6 +15,7 @@ public class ScaperBot {
     private void initializeScraperBot() {
         WebDriverManager.chromedriver().browserVersion("77.0.3865.40").setup();
         ChromeOptions options = new ChromeOptions();
+//        options.addArguments("--headless=new");
         options.addArguments("start-maximized");
         options.addArguments("enable-automation");
         options.addArguments("--no-sandbox");
