@@ -22,12 +22,6 @@ class Index {
             String jobDescription = job.getJobDescription().replaceAll("\\\\n|\\n", " ");
             //Matches one or more characters that are not alphabetic
             String[] words = jobDescription.trim().split("\\P{Alpha}+");
-            System.out.println(jobDescription);
-            for(String word : words){
-                System.out.println(word);
-            }
-
-            System.out.println("--------------------------");
             for (String word : words) {
                 word = word.toLowerCase();
                 if (!index.containsKey(word))
