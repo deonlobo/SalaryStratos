@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public class FetchAndUpdateData {
-    public List<Job> readJsonData() {
+    public static List<Job> readJsonData() {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             File file = new ClassPathResource("database.json").getFile();

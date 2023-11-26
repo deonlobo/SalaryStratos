@@ -63,6 +63,7 @@ public class RemoteOk {
                 //System.out.println("Page Source:\n" + pageSource);
                 List<Job> validatedJobList = jsoupExtractor(pageSource);
 
+                //Append to json
                 FetchAndUpdateData.appendListToJson(validatedJobList);
             }catch (NoSuchElementException | TimeoutException e) {
                 // Close the browser window and continue to the next loop if it fails
