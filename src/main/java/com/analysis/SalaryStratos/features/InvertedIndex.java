@@ -16,7 +16,6 @@ class Index {
 
     public void buildIndex(){
         List<Job> jobsList = FetchAndUpdateData.readJsonData();
-        int i = 0;
         for (Job job : jobsList) {
             sources.put(job.getId(), job.getJobTitle());
             String jobDescription = job.getJobDescription().replaceAll("\\\\n|\\n", " ");
@@ -28,7 +27,6 @@ class Index {
                     index.put(word, new HashSet<>());
                 index.get(word).add(job.getId());
             }
-            System.out.println();
         }
 
     }

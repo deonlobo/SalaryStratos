@@ -1,11 +1,8 @@
 package com.analysis.SalaryStratos.controllers;
 
-import com.analysis.SalaryStratos.features.JobSearchAndSort;
-import com.analysis.SalaryStratos.features.SearchFrequency;
+import com.analysis.SalaryStratos.features.*;
 import com.analysis.SalaryStratos.models.Job;
 import com.analysis.SalaryStratos.models.JobValidation;
-import com.analysis.SalaryStratos.features.DataValidation;
-import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
