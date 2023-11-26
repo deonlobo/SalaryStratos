@@ -21,13 +21,14 @@ class Index {
             sources.put(job.getId(), job.getJobTitle());
             String jobDescription = job.getJobDescription().replaceAll("\\\\n|\\n", " ");
             //Matches one or more characters that are not alphabetic
-            String[] words = jobDescription.trim().split("\\P{Alpha}+");
+            String[] words = jobDescription.trim().split("[^a-zA-Z]+");
             for (String word : words) {
                 word = word.toLowerCase();
                 if (!index.containsKey(word))
                     index.put(word, new HashSet<>());
                 index.get(word).add(job.getId());
             }
+            System.out.println();
         }
 
     }
