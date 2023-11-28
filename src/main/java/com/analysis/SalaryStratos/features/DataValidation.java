@@ -38,7 +38,7 @@ public class DataValidation {
     //Data validation using regular expression
     public List<JobValidation> validateScrapedData(){
 
-        jobService.readJsonData().forEach(job->{
+        Objects.requireNonNull(FetchAndUpdateData.readJsonData()).forEach(job->{
             JobValidation jobValidation = new JobValidation();
             AtomicBoolean allValid = new AtomicBoolean(true);
             jobValidation.setId(job.getId());
@@ -116,5 +116,22 @@ public class DataValidation {
             allValid.set(Boolean.FALSE);
             return Boolean.FALSE;
         }
+    }
+
+    public static List<String> validateSuggestionRequest(String searchTerm) {
+        String processedString = searchTerm.replaceAll("[^a-zA-Z0-9\\s]", "");
+
+        String[] processedStringsList = processedString.split("\\s");
+        List<String> finalStringSet = new ArrayList<>();
+
+        for (String eachString: processedStringsList) {
+            String trimmedString = eachString.trim();
+            if (!trimmedString.isEmpty()) {
+                finalStringSet.add(trimmedString);
+            }
+        }
+
+        return finalStringSet;
+
     }
 }

@@ -16,40 +16,45 @@ import java.util.*;
 public class SimplyHiredScraper {
 
     String websiteUrl = "https://www.simplyhired.com";
-    Queue<String> jobLinksQueue = new LinkedList<>();
 
     public void crawlWebPage(String[] searchTerms) {
-        ScaperBot bot = new ScaperBot();
-        WebDriver scraperBot = bot.getScraperBot();
+        ScraperBot bot = ScraperBot.getScraperBot();
+        WebDriver scraperBot = bot.getDriver();
+        Queue<String> jobLinksQueue = bot.getJobLinksQueue();
         WebDriverWait scraperBotWithWait = bot.getScraperBotWithWait(scraperBot);
         for(String searchTerm: searchTerms) {
             scraperBot.get(websiteUrl + "/search?q=" + searchTerm);
             String pageSource = scraperBot.getPageSource();
-            scrapJobLinks(pageSource);
-            while (jobLinksQueue.size() < 2) {
+            scrapJobLinks(pageSource, jobLinksQueue);
+            while (jobLinksQueue.size() < 100) {
                 System.out.println(jobLinksQueue.size());
                 try {
-                    String nextlink = scraperBot
+                    String nextLink = scraperBot
                             .findElement(By.xpath("//nav[@data-testid='pageNumberContainer']//span[@aria-current='true']"))
                             .findElement(By.xpath("following-sibling::*"))
                             .getAttribute("href");
-                    scraperBot.get(nextlink);
+                    scraperBot.get(nextLink);
                     scraperBotWithWait
                             .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@id='job-list']")));
                     pageSource = scraperBot.getPageSource();
-                    scrapJobLinks(pageSource);
+                    scrapJobLinks(pageSource, jobLinksQueue);
                 } catch (NoSuchElementException e) {
                     System.out.println("Error while getting links: " + e);
                     continue;
                 }
 
             }
+            Collection<Job> jobsCollection = new ArrayList<>();
 
             for (String jobLink: jobLinksQueue) {
                 scraperBot.get(jobLink);
                 String jobPageSource = scraperBot.getPageSource();
-                scrapeJobData(jobPageSource, jobLink);
+
+                Job job = scrapeJobData(jobPageSource, jobLink);
+                jobsCollection.add(job);
             }
+
+            bot.saveToJson(jobsCollection);
         }
 
 //        scrapeWebPage(pageSource);
@@ -57,7 +62,7 @@ public class SimplyHiredScraper {
 
     }
 
-    public void scrapJobLinks(String pageSource) {
+    public void scrapJobLinks(String pageSource, Queue<String> jobLinksQueue) {
         Document pageDoc = Jsoup.parse(pageSource);
         Elements liElements = pageDoc.select("[id=job-list]>li");
         for(Element liElement: liElements) {
@@ -66,8 +71,7 @@ public class SimplyHiredScraper {
         }
     }
 
-    public void scrapeJobData(String pageSource, String jobLink) {
-        Collection<Job> jobsCollection = new ArrayList<>();
+    public Job scrapeJobData(String pageSource, String jobLink) {
         Document pageDoc = Jsoup.parse(pageSource);
         String jobId = jobLink.replace("https://www.simplyhired.com/job/", "");
         String jobTitle = pageDoc.select("h1[data-testid=viewJobTitle]").text();
@@ -144,7 +148,7 @@ public class SimplyHiredScraper {
         job.setMinSalary(minSalary);
         job.setMaxSalary(maxSalary);
 
-        jobsCollection.add(job);
+        return  job;
     }
 
     public static void main(String[] args) {

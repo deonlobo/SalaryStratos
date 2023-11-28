@@ -28,8 +28,8 @@ public class RemoteOk {
         // Iterate through the jobTitle list using a for loop
         for (String title : jobTitle) {
             String websiteUrl= "https://remoteok.com/";
-            ScaperBot bot = new ScaperBot();
-            WebDriver scraperBot = bot.getScraperBot();
+            ScraperBot bot = ScraperBot.getScraperBot();
+            WebDriver scraperBot = bot.getDriver();
             WebDriverWait wait = bot.getScraperBotWithWait(scraperBot);
 
             scraperBot.get(websiteUrl);

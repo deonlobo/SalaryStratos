@@ -19,8 +19,8 @@ public class Ziprecruiter {
     Queue<String> jobLinksQueue = new LinkedList<>();
 
     public void crawlWebPage(String[] searchTerms) throws InterruptedException {
-        ScaperBot bot = new ScaperBot();
-        WebDriver scraperBot = bot.getScraperBot();
+        ScraperBot bot = ScraperBot.getScraperBot();
+        WebDriver scraperBot = bot.getDriver();
         WebDriverWait scraperBotWithWait = bot.getScraperBotWithWait(scraperBot);
 
         loginToZiprecruiter(scraperBot);
@@ -91,15 +91,15 @@ public class Ziprecruiter {
 
         Elements divs = doc.select("div.w-full");
 
-        for (Element div : divs) {
-            if (div.text().contains("Quick Apply")) {
-                Element anchorTag = div.selectFirst("a[href^='https://www.ziprecruiter.com']");
-                if (anchorTag != null) {
-                    String hrefValue = anchorTag.attr("href");
-                    jobLinksQueue.add(hrefValue);
-                }
-            }
-        }
+//        for (Element div : divs) {
+//            if (div.text().contains("Quick Apply")) {
+//                Element anchorTag = div.selectFirst("a[href^='https://www.ziprecruiter.com']");
+//                if (anchorTag != null) {
+//                    String hrefValue = anchorTag.attr("href");
+//                    jobLinksQueue.add(hrefValue);
+//                }
+//            }
+//        }
     }
 
 
