@@ -1,7 +1,6 @@
 package com.analysis.SalaryStratos.controllers;
 
-import com.analysis.SalaryStratos.features.JobSearchAndSort;
-import com.analysis.SalaryStratos.features.SearchFrequency;
+import com.analysis.SalaryStratos.features.*;
 import com.analysis.SalaryStratos.models.Job;
 import com.analysis.SalaryStratos.models.JobValidation;
 import com.analysis.SalaryStratos.features.DataValidation;
