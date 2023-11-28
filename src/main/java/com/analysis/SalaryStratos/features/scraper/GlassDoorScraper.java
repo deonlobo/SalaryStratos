@@ -1,5 +1,7 @@
 package com.analysis.SalaryStratos.features.scraper;
 
+import com.analysis.SalaryStratos.features.DataValidation;
+import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import com.analysis.SalaryStratos.models.Job;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,9 +11,13 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+@Service
 public class GlassDoorScraper {
     String websiteUrl = "https://www.glassdoor.ca/index.htm";
     Queue<String> jobLinksQueue = new LinkedList<>();
@@ -70,9 +76,11 @@ public class GlassDoorScraper {
         }
 
 
-//        String pageSource = scraperBot.getPageSource();
-//        scrapeWebPage(pageSource);
-
+        String pageSource = scraperBot.getPageSource();
+        //scrapeWebPage will give us the scrapped data of the list of jobs in the pageSource
+        Collection<Job> validatedJobList = scrapeWebPage(pageSource);
+        //Append data to json database
+        bot.saveAndAppendToJson(validatedJobList);
     }
 
     public int scrapJobLinks(String pageSource, int liCount) {
@@ -101,17 +109,18 @@ public class GlassDoorScraper {
         passwordInput.sendKeys(Keys.ENTER);
     }
 
-    public void scrapeWebPage(String pageSource) {
-        Collection<Job> job = new ArrayList<Job>();
+    public Collection<Job> scrapeWebPage(String pageSource) {
+        Collection<Job> jobList = new ArrayList<Job>();
         Document pageDoc = Jsoup.parse(pageSource);
         Elements liElements = pageDoc.select("[class=]>li");
         int liCount = liElements.size();
         System.out.println("liCOunt: " + liCount);
         for (int liIterator = 0; liIterator < liCount; liIterator++) {
+            Job job = new Job();
             Element liElement = liElements.get(liIterator);
             String jobTitle = liElement.select("h2[data-testid=searchSerpJobTitle]").text();
             String jobCompanyName = liElement.select("[data-testid=searchSerpJobLocation]").text();
-            String jobWebsiteName = "SimplyHired";
+            String jobWebsiteName = "GlassDoor";
             String jobWebsiteLink = liElement.select("h2[data-testid=searchSerpJobTitle] a").attr("href");
 
             String jobSalary = liElement.select("p[data-testid=searchSerpJobSalaryEst]").text();
@@ -154,9 +163,30 @@ public class GlassDoorScraper {
             String jobDescription = liElement.select("p[data-testid=searchSerpJobSnippet]").text();
 
             System.out.println(jobTitle + ", " + jobCompanyName + ", " + jobWebsiteLink + ", " + minSalary + ", " + maxSalary  + ", " + jobDescription);
+            String regex = "https://www.glassdoor\\.ca/job-listing\\?jl=(\\d+)";
+            Pattern pattern = Pattern.compile(regex);
+            // Match the pattern against the URL
+            Matcher matcher = pattern.matcher(jobWebsiteLink);
+            // Check if the pattern is found
+            if (matcher.find()) {
+                // Extract the job listing ID (group 1)
+                job.setId(matcher.group(1));
+            }
+            job.setJobTitle(jobTitle);
+            job.setCompanyName(jobCompanyName);
+            job.setJobWebsiteName(jobWebsiteName);
+            job.setJobWebsiteLink(jobWebsiteLink);
+            job.setMinSalary(minSalary);
+            job.setMaxSalary(maxSalary);
+            job.setLocation("Canada");
+            job.setJobDescription(jobDescription);
 
-
+            //Add Only the validated data to the jobList
+            if(DataValidation.validateDataForOneObject(job)){
+                jobList.add(job);
+            }
         }
+        return jobList;
     }
 
     public static void main(String[] args) throws InterruptedException {

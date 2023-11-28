@@ -1,12 +1,12 @@
 package com.analysis.SalaryStratos.controllers;
 
 import com.analysis.SalaryStratos.features.*;
-import com.analysis.SalaryStratos.models.Job;
-import com.analysis.SalaryStratos.models.JobValidation;
+import com.analysis.SalaryStratos.features.scraper.GlassDoorScraper;
+import com.analysis.SalaryStratos.features.scraper.RemoteOk;
+import com.analysis.SalaryStratos.features.scraper.SimplyHiredScraper;
+import com.analysis.SalaryStratos.models.*;
 import com.analysis.SalaryStratos.features.DataValidation;
 import com.analysis.SalaryStratos.features.FetchAndUpdateData;
-import com.analysis.SalaryStratos.models.SuggestionModel;
-import com.analysis.SalaryStratos.models.WordSuggestionResponse;
 import com.analysis.SalaryStratos.services.JobDataTrie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,15 +26,24 @@ public class FeatureController {
     private final JobSearchAndSort jobSearchAndSort;
     @Autowired
     private final SearchFrequency searchFrequency;
+    @Autowired
+    private final SimplyHiredScraper simplyHiredScraper;
+    @Autowired
+    private final RemoteOk remoteOk;
+    @Autowired
+    private final GlassDoorScraper glassDoorScraper;
 
     @Autowired
     private final JobDataTrie jobData;
 
-    public FeatureController(FetchAndUpdateData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency, JobDataTrie jobData) {
+    public FeatureController(FetchAndUpdateData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency, SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper, JobDataTrie jobData) {
         this.jobService = jobService;
         this.dataValidation = dataValidation;
         this.jobSearchAndSort = jobSearchAndSort;
         this.searchFrequency = searchFrequency;
+        this.simplyHiredScraper = simplyHiredScraper;
+        this.remoteOk = remoteOk;
+        this.glassDoorScraper = glassDoorScraper;
         this.jobData = jobData;
     }
 
@@ -92,12 +101,14 @@ public class FeatureController {
         return jobService.readJsonData();
     }
 
+    //Used for testing
     @GetMapping(value = "/validate")
     @ResponseBody
     public List<JobValidation> validateJobs() {
         return dataValidation.validateScrapedData();
     }
 
+    //Used for testing
     //http://localhost:8080/search?searchTerm=account
     @PutMapping(value = "/search")
     @ResponseBody
@@ -105,10 +116,32 @@ public class FeatureController {
         return jobSearchAndSort.searchAndSortJobs(searchTerm.toLowerCase());
     }
 
+    //Returns all the searchFrequencies
     @GetMapping(value = "/search/frequency")
     @ResponseBody
     public Map<String, Integer> jobSearchFrequency() {
         return searchFrequency.displaySearchFrequencies();
+    }
+
+    //Crawling the data
+    @PostMapping(value = "/crawl")
+    @ResponseBody
+    public Boolean crawlData(@RequestBody CrawlRequest crawlRequest) throws InterruptedException {
+        // Access the parameters from crawlRequest and perform the necessary logic
+        boolean simplyHiredBoolen = crawlRequest.isSimplyHired();
+        boolean remoteOkBoolean = crawlRequest.isRemoteOk();
+        boolean glassDoorBoolean = crawlRequest.isGlassDoor();
+        String[] searchTerms = crawlRequest.getSearchTerms();
+
+        if(simplyHiredBoolen)
+            simplyHiredScraper.crawlWebPage(crawlRequest.getSearchTerms());
+        if(remoteOkBoolean)
+            remoteOk.crawlRemoteOk(crawlRequest.getSearchTerms());
+        if(glassDoorBoolean)
+            glassDoorScraper.crawlWebPage(crawlRequest.getSearchTerms());
+
+        
+        return true;
     }
 
 }

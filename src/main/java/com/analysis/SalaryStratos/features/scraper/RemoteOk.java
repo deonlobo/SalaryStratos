@@ -10,23 +10,33 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Service
 public class RemoteOk {
     static String JOBWEBSITENAME = "Remote Ok";
 
-
     public static void main(String[] args) throws InterruptedException {
-        List<String> jobTitle = Arrays.asList(
+        RemoteOk remoteOk = new RemoteOk();
+        String[] searchTermsList = new String[]{
                 "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Medical", "Front End", "Full Stack", "Ops", "Design", "React", "InfoSec", "Marketing", "Mobile", "Content Writing", "SaaS", "Recruiter", "Full Time", "API", "Sales", "Ruby", "Education", "DevOps", "Stats", "Python", "Node", "English", "Non Tech", "Video", "Travel", "Quality Assurance", "Ecommerce", "Teaching", "Linux", "Java", "Crypto", "Junior", "Git", "Legal", "Android", "Accounting", "Admin", "Microsoft", "Excel", "PHP"
-        );
+        };
+        remoteOk.crawlRemoteOk(searchTermsList);
+    }
+
+
+    public void crawlRemoteOk(String[] searchTermsList) throws InterruptedException {
+        /*List<String> jobTitle = Arrays.asList(
+                "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Medical", "Front End", "Full Stack", "Ops", "Design", "React", "InfoSec", "Marketing", "Mobile", "Content Writing", "SaaS", "Recruiter", "Full Time", "API", "Sales", "Ruby", "Education", "DevOps", "Stats", "Python", "Node", "English", "Non Tech", "Video", "Travel", "Quality Assurance", "Ecommerce", "Teaching", "Linux", "Java", "Crypto", "Junior", "Git", "Legal", "Android", "Accounting", "Admin", "Microsoft", "Excel", "PHP"
+        );*/
 
         // Iterate through the jobTitle list using a for loop
-        for (String title : jobTitle) {
+        for (String title : searchTermsList) {
             String websiteUrl= "https://remoteok.com/";
             ScraperBot bot = ScraperBot.getScraperBot();
             WebDriver scraperBot = bot.getDriver();
@@ -47,7 +57,7 @@ public class RemoteOk {
                 if (filterResultsDiv.getText().trim().isEmpty()) {
                     System.out.println("this title is not there "+title);
                     // Close the browser window
-                    scraperBot.quit();
+                    //scraperBot.quit();
                     continue;
                 }
 
@@ -58,16 +68,16 @@ public class RemoteOk {
                 String pageSource = scraperBot.getPageSource();
 
                 // Close the browser window
-                scraperBot.quit();
+                //scraperBot.quit();
 
                 //System.out.println("Page Source:\n" + pageSource);
-                List<Job> validatedJobList = jsoupExtractor(pageSource);
+                Collection<Job> validatedJobList = jsoupExtractor(pageSource);
 
-                //Append to json
-                FetchAndUpdateData.appendListToJson(validatedJobList);
+                //Append Only the validated data to json database
+                bot.saveAndAppendToJson(validatedJobList);
             }catch (NoSuchElementException | TimeoutException e) {
                 // Close the browser window and continue to the next loop if it fails
-                scraperBot.quit();
+                //scraperBot.quit();
                 continue;
             }
 
@@ -77,8 +87,8 @@ public class RemoteOk {
 
     }
 
-    public static List<Job> jsoupExtractor(String pageSource){
-        List<Job> jobList = new ArrayList<>();
+    public static Collection<Job> jsoupExtractor(String pageSource){
+        Collection<Job> jobList = new ArrayList<>();
         Document document = Jsoup.parse(pageSource);
         // Select all tr elements
         Elements trElements = document.select("tr[id^='job-']");
@@ -166,6 +176,7 @@ public class RemoteOk {
 
             job.setId(dataId);
 
+            //Add Only the validated data to the jobList
             if(DataValidation.validateDataForOneObject(job)){
                 jobList.add(job);
             }

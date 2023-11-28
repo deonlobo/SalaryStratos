@@ -4,7 +4,6 @@ public class JobValidation {
     private String id;
     private Boolean jobTitle;
     private Boolean companyName;
-    private Boolean jobWebsiteName;
     private Boolean jobWebsiteLink;
     private Boolean minSalary;
     private Boolean maxSalary;
@@ -37,13 +36,6 @@ public class JobValidation {
         this.companyName = companyName;
     }
 
-    public Boolean getJobWebsiteName() {
-        return jobWebsiteName;
-    }
-
-    public void setJobWebsiteName(Boolean jobWebsiteName) {
-        this.jobWebsiteName = jobWebsiteName;
-    }
 
     public Boolean getJobWebsiteLink() {
         return jobWebsiteLink;

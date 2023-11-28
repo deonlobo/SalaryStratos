@@ -1,11 +1,15 @@
 package com.analysis.SalaryStratos.features;
 
 import com.analysis.SalaryStratos.models.Job;
+import com.analysis.SalaryStratos.models.Jobs;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,17 +18,25 @@ import java.util.List;
 @Service
 public class FetchAndUpdateData {
     public static List<Job> readJsonData() {
-        ObjectMapper objectMapper = new ObjectMapper();
+       /* ObjectMapper objectMapper = new ObjectMapper();
         try {
             File file = new ClassPathResource("database.json").getFile();
-            return Arrays.asList(objectMapper.readValue(file, Job[].class));
+            //return Arrays.asList(objectMapper.readValue(file, Job[].class));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }*/
+        Gson jsonHandler = new Gson();
+        Jobs jobs = null;
+        try {
+            jobs = jsonHandler.fromJson(new FileReader("src/main/resources/database.json"), Jobs.class);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
+        return (ArrayList<Job>) jobs.getJobs();
     }
 
-    public static List<Job> appendListToJson(List<Job> jobList) {
+  /*  public static List<Job> appendListToJson(List<Job> jobList) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             File file = new File("src/main/resources/database.json");
@@ -53,5 +65,5 @@ public class FetchAndUpdateData {
             e.printStackTrace();
             return null;
         }
-    }
+    }*/
 }
