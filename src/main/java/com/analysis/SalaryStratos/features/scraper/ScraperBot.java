@@ -22,7 +22,6 @@ import java.util.Queue;
 public class ScraperBot {
     private static ScraperBot bot = null;
     private WebDriver driver = null;
-
     private Queue<String> jobLinksQueue;
 
 

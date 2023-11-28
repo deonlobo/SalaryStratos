@@ -1,7 +1,9 @@
 package com.analysis.SalaryStratos.services;
 
 
+import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
 import com.analysis.SalaryStratos.dataStructures.trie.TrieDS;
+import com.analysis.SalaryStratos.dataStructures.trie.WordFrequency;
 import com.analysis.SalaryStratos.models.Job;
 import com.analysis.SalaryStratos.models.Jobs;
 import com.google.gson.Gson;
@@ -11,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,7 +63,7 @@ public class JobDataTrie {
         j.initializeTrie();
     }
 
-    public List<String> suggestWordsBasedOnPrefix(String wordPrefix) {
+    public SortedArray<WordFrequency> suggestWordsBasedOnPrefix(String wordPrefix) {
         return jobsDataTrie.searchInTrieWithPrefix(wordPrefix);
     }
 

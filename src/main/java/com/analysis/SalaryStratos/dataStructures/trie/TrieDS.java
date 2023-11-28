@@ -1,8 +1,8 @@
 package com.analysis.SalaryStratos.dataStructures.trie;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
+
+import java.util.*;
 
 public class TrieDS {
     TrieNode root;
@@ -41,28 +41,33 @@ public class TrieDS {
         return node;
     }
 
-    public List<String> searchInTrieWithPrefix(String prefix) {
+    public SortedArray<WordFrequency> searchInTrieWithPrefix(String prefix) {
         TrieNode node = root;
         for (char c : prefix.toCharArray()) {
             if (!node.children.containsKey(c)) {
-                return Collections.emptyList();
+                return null;
             }
             node = node.children.get(c);
         }
         System.out.println(node.isEndOfWord);
         System.out.println(node.children.keySet());
         if(node.children == null) {
-            return new ArrayList<>();
+            return null;
         }
-        List<String> suggestions = new ArrayList<>();
+        SortedArray<WordFrequency> suggestions = new SortedArray<>(Comparator.comparingInt(WordFrequency::getFrequency));
         collectWords(node, prefix, suggestions);
         return suggestions;
     }
 
     // Recursive function to collect words from a trie node
-    private void collectWords(TrieNode node, String currentPrefix, List<String> suggestions) {
+    private void collectWords(TrieNode node, String currentPrefix, SortedArray<WordFrequency> suggestions) {
         if (node.isEndOfWord) {
-            suggestions.add(currentPrefix);
+            int totalFrequency = 0;
+            for (Integer count: node.getWordFrequency().values()){
+                totalFrequency += count;
+            }
+            WordFrequency word = new WordFrequency(totalFrequency, currentPrefix);
+            suggestions.insert(word);
         }
         for (char c : node.children.keySet()) {
             collectWords(node.children.get(c), currentPrefix + c, suggestions);

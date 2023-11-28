@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,9 +50,14 @@ public class FeatureController {
     @CrossOrigin
     @GetMapping(value = "/recentSearches")
     @ResponseBody
-    public String[] getRecentSearches() {
+    public Map<String, Integer> getRecentSearches() {
 
-        return new String[]{"abc", "123"};
+        Map<String, Integer> m1 = new HashMap<>();
+        m1.put("Software", 4);
+        m1.put("Developer", 2);
+        m1.put("Deon", 1);
+        return m1;
+//        return new String[]{"abc", "123"};
     }
 
     @CrossOrigin
@@ -59,29 +65,7 @@ public class FeatureController {
     @ResponseBody
     public WordSuggestionResponse getSuggestions(@RequestBody String searchTerm) {
         List<String> validatedSearchTerms = DataValidation.validateSuggestionRequest(searchTerm);
-        WordSuggestionResponse suggestons = new WordSuggestionResponse();
 
-        if (validatedSearchTerms.isEmpty()) {
-            System.out.println("IsEmpty");
-            suggestons.setResponseValid(false);
-        } else {
-            List<SuggestionModel> suggestedWordsList = new ArrayList<>();
-            for (String searchPrefix: validatedSearchTerms) {
-                System.out.println(searchPrefix);
-                SuggestionModel model = new SuggestionModel();
-                model.setWord(searchPrefix);
-
-                model.setSuggestedWords(jobData.suggestWordsBasedOnPrefix(searchPrefix));
-
-                suggestedWordsList.add(model);
-            }
-
-            suggestons.setWordSuggestions(suggestedWordsList);
-        }
-
-
-
-        return suggestons;
     }
 
 

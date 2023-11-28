@@ -1,10 +1,13 @@
 package com.analysis.SalaryStratos.models;
 
-import java.util.List;
+import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
+import com.analysis.SalaryStratos.dataStructures.trie.WordFrequency;
+
+import java.util.Map;
 
 public class SuggestionModel {
     String word;
-    List<String> suggestedWords;
+    SortedArray<WordFrequency> suggestedWords;
 
 
 
@@ -16,11 +19,11 @@ public class SuggestionModel {
         this.word = word;
     }
 
-    public List<String> getSuggestedWords() {
+    public SortedArray<WordFrequency> getSuggestedWords() {
         return suggestedWords;
     }
 
-    public void setSuggestedWords(List<String> suggestedWords) {
+    public void setSuggestedWords(SortedArray<WordFrequency> suggestedWords) {
         this.suggestedWords = suggestedWords;
     }
 }
