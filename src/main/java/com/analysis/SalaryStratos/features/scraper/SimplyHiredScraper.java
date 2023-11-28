@@ -1,5 +1,7 @@
 package com.analysis.SalaryStratos.features.scraper;
 
+import com.analysis.SalaryStratos.features.DataValidation;
+import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import com.analysis.SalaryStratos.models.Job;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,9 +12,11 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Service
 public class SimplyHiredScraper {
 
     String websiteUrl = "https://www.simplyhired.com";
@@ -51,10 +55,14 @@ public class SimplyHiredScraper {
                 String jobPageSource = scraperBot.getPageSource();
 
                 Job job = scrapeJobData(jobPageSource, jobLink);
-                jobsCollection.add(job);
+
+                //Add Only the validated data to the jobList
+                if(DataValidation.validateDataForOneObject(job)){
+                    jobsCollection.add(job);
+                }
             }
 
-            bot.saveToJson(jobsCollection);
+            bot.saveAndAppendToJson(jobsCollection);
         }
 
 //        scrapeWebPage(pageSource);

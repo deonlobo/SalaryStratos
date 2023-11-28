@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 
 @SpringBootApplication
 public class SalaryStratosApplication {
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		ApplicationContext applicationContext = SpringApplication.run(SalaryStratosApplication.class, args);
 		JobDataTrie jobData = applicationContext.getBean(JobDataTrie.class);
 
