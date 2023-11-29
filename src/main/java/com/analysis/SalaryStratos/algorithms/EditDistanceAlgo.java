@@ -5,7 +5,7 @@ import java.util.List;
 
 public class EditDistanceAlgo {
 
-    public static int calculateLevenshteinDistance(String word1, String word2) {
+    public static int calculateEditDistance(String word1, String word2) {
         int[][] dp = new int[word1.length() + 1][word2.length() + 1];
 
         for (int i = 0; i <= word1.length(); i++) {
@@ -28,7 +28,7 @@ public class EditDistanceAlgo {
         List<String> closestWords = new ArrayList<>();
 
         for (String dictWord : dictionary) {
-            int distance = calculateLevenshteinDistance(word, dictWord);
+            int distance = calculateEditDistance(word, dictWord);
             if (distance <= maxDistance) {
                 closestWords.add(dictWord);
             }

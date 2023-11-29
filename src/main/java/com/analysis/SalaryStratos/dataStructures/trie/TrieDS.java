@@ -1,17 +1,28 @@
 package com.analysis.SalaryStratos.dataStructures.trie;
 
 import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
+import com.analysis.SalaryStratos.models.WordFrequency;
 
 import java.util.*;
 
 public class TrieDS {
     TrieNode root;
 
+    Map<String, Integer> dict = new HashMap<>();
+
+
+
     public TrieDS() {
         this.root = new TrieNode();
     }
 
+    public Map<String, Integer> getDict() {
+        return dict;
+    }
+
     public void insertIntoTrie(String word, String jobId) {
+
+        dict.put(word, dict.getOrDefault(word, 0) +1);
         TrieNode node = root;
 
         for (char c : word.toCharArray()) {
@@ -38,7 +49,11 @@ public class TrieDS {
             node = node.children.get(c);
         }
 
-        return node;
+        if(node.isEndOfWord) {
+            return  node;
+        } else {
+            return null;
+        }
     }
 
     public SortedArray<WordFrequency> searchInTrieWithPrefix(String prefix) {

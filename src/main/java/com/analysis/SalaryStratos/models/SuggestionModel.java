@@ -1,9 +1,6 @@
 package com.analysis.SalaryStratos.models;
 
 import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
-import com.analysis.SalaryStratos.dataStructures.trie.WordFrequency;
-
-import java.util.Map;
 
 public class SuggestionModel {
     String word;

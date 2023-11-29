@@ -1,8 +1,6 @@
 package com.analysis.SalaryStratos.models;
 
-import java.util.List;
-
-public class CrawlRequest {
+public class CrawlerRequest {
     private boolean simplyHired;
     private boolean remoteOk;
     private boolean glassDoor;

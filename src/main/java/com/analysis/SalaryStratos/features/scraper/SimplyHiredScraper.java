@@ -31,7 +31,6 @@ public class SimplyHiredScraper {
             String pageSource = scraperBot.getPageSource();
             scrapJobLinks(pageSource, jobLinksQueue);
             while (jobLinksQueue.size() < 100) {
-                System.out.println(jobLinksQueue.size());
                 try {
                     String nextLink = scraperBot
                             .findElement(By.xpath("//nav[@data-testid='pageNumberContainer']//span[@aria-current='true']"))
@@ -91,19 +90,44 @@ public class SimplyHiredScraper {
         jobSalary = jobSalary.replace("Estimated: ", "");
         int minSalary = 0;
         int maxSalary = 0;
+        int indexOfDollar = jobSalary.indexOf("$");
+        if(indexOfDollar > -1) {
+            jobSalary = jobSalary.substring(indexOfDollar);
+        }
         String regexYearlyWithK = "\\$([\\d.]+)K - \\$([\\d.]+)K a year";
+        String regexYearlyFrom = "\\$([\\d,]+) a year";
+        String regexWeeklyWithoutK = "\\$([\\d,]+) - \\$([\\d,]+) a week";
+        String regexMonthlyWithoutK = "\\$([\\d,]+) - \\$([\\d,]+) a month";
         String regexYearlyWithoutK = "\\$([\\d,]+) - \\$([\\d,]+) a year";
         String regexHourly = "\\$([\\d.]+) - \\$([\\d.]+) an hour";
         String regexHourlyNonDecimal = "\\$([\\d]+) - \\$([\\d]+) an hour";
         String regexHourlyFrom = "\\$([\\d.]+) an hour";
-
+        String regexDaily = "\\$([\\d.]+) a day";
+        String regexWeekMax = "\\$([\\d,]+) a week";
         String regexYearFrom = "\\$([\\d,]+) a year";
-        if (jobSalary.matches(regexYearlyWithK)) {
+
+        if (jobSalary.matches(regexDaily)) {
+            String upperSalaryStr = jobSalary.replaceAll(regexDaily, "$1");
+
+            maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 20 * 12);
+        }
+        else if (jobSalary.matches(regexWeekMax)) {
+            String upperSalaryStr = jobSalary.replaceAll(regexWeekMax, "$1");
+            upperSalaryStr = upperSalaryStr.replace(",", "");
+
+            maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 3 * 12);
+        }
+        else if (jobSalary.matches(regexYearlyWithK)) {
             String lowerSalaryStr = jobSalary.replaceAll(regexYearlyWithK, "$1");
             String upperSalaryStr = jobSalary.replaceAll(regexYearlyWithK, "$2");
 
             minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
             maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 1000);
+        } else if (jobSalary.matches(regexYearlyFrom)) {
+            String upperSalaryStr = jobSalary.replaceAll(regexYearlyFrom, "$1");
+            upperSalaryStr = upperSalaryStr.replace(",", "");
+
+            maxSalary = (int) (Double.parseDouble(upperSalaryStr));
         } else if (jobSalary.matches(regexYearlyWithoutK)) {
                 String lowerSalaryStr = jobSalary.replaceAll(regexYearlyWithoutK, "$1");
                 lowerSalaryStr = lowerSalaryStr.replace(",", "");
@@ -112,26 +136,42 @@ public class SimplyHiredScraper {
                 upperSalaryStr = upperSalaryStr.replace(",", "");
 
 
-                minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
-                maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 1000);
+                minSalary = (int) (Double.parseDouble(lowerSalaryStr));
+                maxSalary = (int) (Double.parseDouble(upperSalaryStr));
+        } else if (jobSalary.matches(regexMonthlyWithoutK)) {
+            String lowerSalaryStr = jobSalary.replaceAll(regexMonthlyWithoutK, "$1");
+            lowerSalaryStr = lowerSalaryStr.replace(",", "");
+
+            String upperSalaryStr = jobSalary.replaceAll(regexMonthlyWithoutK, "$2");
+            upperSalaryStr = upperSalaryStr.replace(",", "");
+            minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 12);
+            maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 12);
+        } else if (jobSalary.matches(regexWeeklyWithoutK)) {
+            String lowerSalaryStr = jobSalary.replaceAll(regexWeeklyWithoutK, "$1");
+            lowerSalaryStr = lowerSalaryStr.replace(",", "");
+
+            String upperSalaryStr = jobSalary.replaceAll(regexWeeklyWithoutK, "$2");
+            upperSalaryStr = upperSalaryStr.replace(",", "");
+            minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 3 * 12);
+            maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 3 * 12);
         }
-        else if (jobSalary.matches(regexHourly)) {
+         else if (jobSalary.matches(regexHourly)) {
             String lowerSalaryStr = jobSalary.replaceAll(regexHourly, "$1");
             String upperSalaryStr = jobSalary.replaceAll(regexHourly, "$2");
 
-            minSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*20*12);
-            maxSalary = (int) (Double.parseDouble(upperSalaryStr)*40*20*12);
+            minSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*4*12);
+            maxSalary = (int) (Double.parseDouble(upperSalaryStr)*40*4*12);
         } else if (jobSalary.matches(regexHourlyNonDecimal)) {
             String lowerSalaryStr = jobSalary.replaceAll(regexHourlyNonDecimal, "$1");
             String upperSalaryStr = jobSalary.replaceAll(regexHourlyNonDecimal, "$2");
 
-            minSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*20*12);
-            maxSalary = (int) (Double.parseDouble(upperSalaryStr)*40*20*12);
+            minSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*4*12);
+            maxSalary = (int) (Double.parseDouble(upperSalaryStr)*40*4*12);
         } else if (jobSalary.matches(regexHourlyFrom)) {
             String lowerSalaryStr = jobSalary.replaceAll(regexHourlyFrom, "$1");
-
+            System.out.println(lowerSalaryStr);
             // Convert to an integer
-            maxSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*20*12);
+            maxSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*4*12);
 
 
         } else if (jobSalary.matches(regexYearFrom)) {

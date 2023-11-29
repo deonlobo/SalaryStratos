@@ -1,5 +1,7 @@
 package com.analysis.SalaryStratos.controllers;
 
+import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
+import com.analysis.SalaryStratos.models.WordFrequency;
 import com.analysis.SalaryStratos.features.*;
 import com.analysis.SalaryStratos.features.scraper.GlassDoorScraper;
 import com.analysis.SalaryStratos.features.scraper.RemoteOk;
@@ -11,10 +13,7 @@ import com.analysis.SalaryStratos.services.JobDataTrie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -37,7 +36,10 @@ public class FeatureController {
     @Autowired
     private final JobDataTrie jobData;
 
-    public FeatureController(FetchAndUpdateData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency, SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper, JobDataTrie jobData) {
+    @Autowired
+    private  final SpellChecker spellChecker;
+
+    public FeatureController(FetchAndUpdateData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency, SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper, JobDataTrie jobData, SpellChecker spellChecker) {
         this.jobService = jobService;
         this.dataValidation = dataValidation;
         this.jobSearchAndSort = jobSearchAndSort;
@@ -46,14 +48,25 @@ public class FeatureController {
         this.remoteOk = remoteOk;
         this.glassDoorScraper = glassDoorScraper;
         this.jobData = jobData;
+        this.spellChecker = spellChecker;
     }
 
     @CrossOrigin
     @PostMapping(value = "/correctWords")
-    @ResponseBody
-    public String[] getCorrectWord(@RequestBody String  request) {
-        System.out.println(request);
-        return new String[]{"abc", "123"};
+    public List<SpellCheckerResponse> getCorrectWord(@RequestParam String searchTerm, @RequestParam int suggestionCount) {
+        System.out.println(searchTerm + " " + suggestionCount);
+        List<String> validatedSearchTerms = DataValidation.validateSuggestionRequest(searchTerm);
+        List<SpellCheckerResponse> response = new ArrayList<>();
+        for(String eachString: validatedSearchTerms) {
+            System.out.println("each: " + eachString);
+
+            TreeMap<Integer, TreeMap<Integer, TreeSet<String>>> list = spellChecker.suggestSimilarWord(eachString,jobData.getInitTrie(), suggestionCount);
+            SpellCheckerResponse res = new SpellCheckerResponse(eachString, list);
+            response.add(res);
+        }
+
+
+        return response;
     }
 
     @CrossOrigin
@@ -71,10 +84,9 @@ public class FeatureController {
 
     @CrossOrigin
     @PostMapping(value = "/wordSuggestions")
-    @ResponseBody
-    public WordSuggestionResponse getSuggestions(@RequestBody String searchTerm) {
+    public WordSuggestionResponse getSuggestions(@RequestParam String searchTerm, @RequestParam int suggestionCount) {
         List<String> validatedSearchTerms = DataValidation.validateSuggestionRequest(searchTerm);
-
+        return WordCompletion.getWordSuggestions(validatedSearchTerms, jobData, suggestionCount);
     }
 
 
@@ -103,26 +115,26 @@ public class FeatureController {
     //Returns all the searchFrequencies
     @GetMapping(value = "/search/frequency")
     @ResponseBody
-    public Map<String, Integer> jobSearchFrequency() {
+    public SortedArray<WordFrequency> jobSearchFrequency() {
         return searchFrequency.displaySearchFrequencies();
     }
 
     //Crawling the data
     @PostMapping(value = "/crawl")
     @ResponseBody
-    public Boolean crawlData(@RequestBody CrawlRequest crawlRequest) throws InterruptedException {
+    public Boolean crawlData(@RequestBody CrawlerRequest crawlerRequest) throws InterruptedException {
         // Access the parameters from crawlRequest and perform the necessary logic
-        boolean simplyHiredBoolen = crawlRequest.isSimplyHired();
-        boolean remoteOkBoolean = crawlRequest.isRemoteOk();
-        boolean glassDoorBoolean = crawlRequest.isGlassDoor();
-        String[] searchTerms = crawlRequest.getSearchTerms();
+        boolean simplyHiredBoolen = crawlerRequest.isSimplyHired();
+        boolean remoteOkBoolean = crawlerRequest.isRemoteOk();
+        boolean glassDoorBoolean = crawlerRequest.isGlassDoor();
+        String[] searchTerms = crawlerRequest.getSearchTerms();
 
         if(simplyHiredBoolen)
-            simplyHiredScraper.crawlWebPage(crawlRequest.getSearchTerms());
+            simplyHiredScraper.crawlWebPage(crawlerRequest.getSearchTerms());
         if(remoteOkBoolean)
-            remoteOk.crawlRemoteOk(crawlRequest.getSearchTerms());
+            remoteOk.crawlRemoteOk(crawlerRequest.getSearchTerms());
         if(glassDoorBoolean)
-            glassDoorScraper.crawlWebPage(crawlRequest.getSearchTerms());
+            glassDoorScraper.crawlWebPage(crawlerRequest.getSearchTerms());
 
         
         return true;

@@ -3,7 +3,7 @@ package com.analysis.SalaryStratos.services;
 
 import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
 import com.analysis.SalaryStratos.dataStructures.trie.TrieDS;
-import com.analysis.SalaryStratos.dataStructures.trie.WordFrequency;
+import com.analysis.SalaryStratos.models.WordFrequency;
 import com.analysis.SalaryStratos.features.scraper.GlassDoorScraper;
 import com.analysis.SalaryStratos.features.scraper.RemoteOk;
 import com.analysis.SalaryStratos.features.scraper.SimplyHiredScraper;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +30,7 @@ public class JobDataTrie {
     private final Gson jsonHandler = new Gson();
     private ArrayList<Job> jobsList = new ArrayList<>();
     private final TrieDS jobsDataTrie = new TrieDS();
+
     String[] searchTermsList = new String[]{
             "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Medical", "Front End", "Full Stack", "Ops", "Design", "React", "InfoSec", "Marketing", "Mobile", "Content Writing", "SaaS", "Recruiter", "Full Time", "API", "Sales", "Ruby", "Education", "DevOps", "Stats", "Python", "Node", "English", "Non Tech", "Video", "Travel", "Quality Assurance", "Ecommerce", "Teaching", "Linux", "Java", "Crypto", "Junior", "Git", "Legal", "Android", "Accounting", "Admin", "Microsoft", "Excel", "PHP"
     };
@@ -61,7 +60,7 @@ public class JobDataTrie {
 
 
 
-    public void initializeTrie() {
+    public TrieDS initializeTrie() {
 
         for (Job job: jobsList) {
             String id = job.getId();
@@ -78,12 +77,19 @@ public class JobDataTrie {
                 Matcher matcher = regex.matcher(token);
 
                 String processedString = matcher.replaceAll("").toLowerCase();
+
                 jobsDataTrie.insertIntoTrie(processedString, id);
             }
 
         }
         System.out.println("Trie init with jobs");
 
+        return jobsDataTrie;
+
+    }
+
+    public TrieDS getInitTrie() {
+        return  jobsDataTrie;
     }
 
    /* public static void main(String[] args) throws FileNotFoundException {

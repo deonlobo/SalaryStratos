@@ -1,4 +1,4 @@
-package com.analysis.SalaryStratos.dataStructures.trie;
+package com.analysis.SalaryStratos.models;
 
 public class WordFrequency {
     private int frequency;
