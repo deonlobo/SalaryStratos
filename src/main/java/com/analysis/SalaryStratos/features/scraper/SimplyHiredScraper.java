@@ -1,5 +1,6 @@
 package com.analysis.SalaryStratos.features.scraper;
 
+import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
 import com.analysis.SalaryStratos.features.DataValidation;
 import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import com.analysis.SalaryStratos.models.Job;
@@ -26,6 +27,8 @@ public class SimplyHiredScraper {
         WebDriver scraperBot = bot.getDriver();
         Queue<String> jobLinksQueue = bot.getJobLinksQueue();
         WebDriverWait scraperBotWithWait = bot.getScraperBotWithWait(scraperBot);
+        Set<String> uniqueJobs = new HashSet<>();
+
         for(String searchTerm: searchTerms) {
             scraperBot.get(websiteUrl + "/search?q=" + searchTerm);
             String pageSource = scraperBot.getPageSource();
@@ -55,8 +58,10 @@ public class SimplyHiredScraper {
 
                 Job job = scrapeJobData(jobPageSource, jobLink);
 
+
                 //Add Only the validated data to the jobList
-                if(DataValidation.validateDataForOneObject(job)){
+                if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
+                    uniqueJobs.add(job.getId());
                     jobsCollection.add(job);
                 }
             }

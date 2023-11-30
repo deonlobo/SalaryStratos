@@ -37,7 +37,7 @@ public class JobSearchAndSort {
         matchingJobs.sort(Comparator.comparingInt(Job::getMinSalary).reversed());
 
         //Update SearchFrequency
-        searchFrequency.updateSearchFrequency(searchTerm);
+//        searchFrequency.updateSearchFrequency(searchTerm);
         return matchingJobs;
     }
 

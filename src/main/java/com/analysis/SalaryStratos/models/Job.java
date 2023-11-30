@@ -1,5 +1,7 @@
 package com.analysis.SalaryStratos.models;
 
+import java.util.Map;
+
 public class Job {
 
     private String id;
@@ -11,7 +13,25 @@ public class Job {
     private int maxSalary;
     private String location;
     private String jobDescription;
+    private int  wordFrequency = 0;
+    private String  word;
 
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+
+    public void setWordFrequency(int wordFrequency) {
+        this.wordFrequency = wordFrequency;
+    }
+
+    public int getWordFrequency() {
+        return wordFrequency;
+    }
 
     public String getId() {
         return id;

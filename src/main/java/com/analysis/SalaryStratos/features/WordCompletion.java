@@ -21,13 +21,10 @@ public class WordCompletion {
             List<SuggestionModel> suggestedWordsList = new ArrayList<>();
             suggestions.setResponseValid(true);
             for (String searchPrefix: validatedSearchTerms) {
-                System.out.println(searchPrefix);
                 SuggestionModel model = new SuggestionModel();
                 model.setWord(searchPrefix);
                 SortedArray<WordFrequency> arr = jobData.suggestWordsBasedOnPrefix(searchPrefix);
-                System.out.println(Math.min(suggestionCount-1, suggestedWordsList.size()));
                 ArrayList<WordFrequency> newList = new ArrayList<>(arr.getDataList().subList(0, Math.min(suggestionCount, arr.getDataList().size())));
-                System.out.println(newList.size());
                 arr.setDataList(newList);
                 model.setSuggestedWords(arr);
 

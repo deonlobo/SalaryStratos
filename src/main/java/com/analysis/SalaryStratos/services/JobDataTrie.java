@@ -28,9 +28,14 @@ public class JobDataTrie {
     @Autowired
     private final GlassDoorScraper glassDoorScraper;
     private final Gson jsonHandler = new Gson();
-    private ArrayList<Job> jobsList = new ArrayList<>();
+
+
     private final TrieDS jobsDataTrie = new TrieDS();
 
+
+//    public ArrayList<Job> getJobsList() {
+//        return jobsList;
+//    }
     String[] searchTermsList = new String[]{
             "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Medical", "Front End", "Full Stack", "Ops", "Design", "React", "InfoSec", "Marketing", "Mobile", "Content Writing", "SaaS", "Recruiter", "Full Time", "API", "Sales", "Ruby", "Education", "DevOps", "Stats", "Python", "Node", "English", "Non Tech", "Video", "Travel", "Quality Assurance", "Ecommerce", "Teaching", "Linux", "Java", "Crypto", "Junior", "Git", "Legal", "Android", "Accounting", "Admin", "Microsoft", "Excel", "PHP"
     };
@@ -41,7 +46,8 @@ public class JobDataTrie {
         this.glassDoorScraper = glassDoorScraper;
     }
 
-    public void getJobsDataFromJson() throws FileNotFoundException, InterruptedException {
+    public ArrayList<Job> getJobsDataFromJson() throws FileNotFoundException, InterruptedException {
+
         Gson gson = new Gson();
         Jobs jobs = null;
         try {
@@ -54,14 +60,14 @@ public class JobDataTrie {
             glassDoorScraper.crawlWebPage(searchTermsList);
             jobs = gson.fromJson(new FileReader("src/main/resources/database.json"), Jobs.class);
         }
-        jobsList = (ArrayList<Job>) jobs.getJobs();
+
         System.out.println("Job data loaded from json");
+
+        return (ArrayList<Job>) jobs.getJobs();
     }
 
-
-
-    public TrieDS initializeTrie() {
-
+    public TrieDS initializeTrie() throws FileNotFoundException, InterruptedException {
+        ArrayList<Job> jobsList = getJobsDataFromJson();
         for (Job job: jobsList) {
             String id = job.getId();
             String description = job.getJobDescription();
@@ -91,12 +97,6 @@ public class JobDataTrie {
     public TrieDS getInitTrie() {
         return  jobsDataTrie;
     }
-
-   /* public static void main(String[] args) throws FileNotFoundException {
-        JobDataTrie j = new JobDataTrie(simplyHiredScraper, remoteOk, glassDoorScraper);
-        j.getJobsDataFromJson();
-        j.initializeTrie();
-    }*/
 
     public SortedArray<WordFrequency> suggestWordsBasedOnPrefix(String wordPrefix) {
         return jobsDataTrie.searchInTrieWithPrefix(wordPrefix);

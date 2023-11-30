@@ -22,7 +22,7 @@ public class DataValidation {
     //Validate that company names consist of letters, spaces, &, ,
     static String companyNameRegex = "^[A-Za-z0-9\\s&,-]+$";
     //Validate Link of the website
-    static String linkRegex = "^(https?|ftp)://[\\w-]+(.[\\w-]+)+([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?$";
+    static String linkRegex = "(\\bhttps?:\\S+\\b)";
     //salary format ensure it's a positive integer
     static String salaryRegex = "^[0-9]\\d*$";
     //Ensure that locations contain anything other than !@#$%^&*+={}[]|\/'"?<>
@@ -118,7 +118,7 @@ public class DataValidation {
         }
     }
 
-    public static List<String> validateSuggestionRequest(String searchTerm) {
+    public static List<String> validateRequest(String searchTerm) {
         String processedString = searchTerm.replaceAll("[^a-zA-Z0-9\\s]", "");
 
         String[] processedStringsList = processedString.split("\\s");

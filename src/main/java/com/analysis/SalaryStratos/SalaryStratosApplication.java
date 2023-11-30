@@ -17,7 +17,7 @@ public class SalaryStratosApplication {
 		JobDataTrie jobData = applicationContext.getBean(JobDataTrie.class);
 		SpellChecker checker = applicationContext.getBean(SpellChecker.class);
 
-		jobData.getJobsDataFromJson();
+//		jobData.getJobsDataFromJson();
 		TrieDS trie = jobData.initializeTrie();
 		checker.initializeSpellChecker(trie);
 

@@ -41,7 +41,10 @@ public class SearchFrequency {
         return recentEntries;
     }
 
-    public void updateSearchFrequency(String searchTerm) {
-        searchFrequencyMap.put(searchTerm, searchFrequencyMap.getOrDefault(searchTerm, 0) + 1);
+    public void updateSearchFrequency(String[] searchTerms) {
+        for(String term: searchTerms) {
+            searchFrequencyMap.put(term, searchFrequencyMap.getOrDefault(term, 0) + 1);
+
+        }
     }
 }
