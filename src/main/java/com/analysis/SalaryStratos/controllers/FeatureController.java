@@ -94,15 +94,19 @@ public class FeatureController {
     }
 
 
+    //sortBy will sort the response based on frequency or salary
     @CrossOrigin
     @PostMapping(value = "/pageRanking/searchJobs")
-    public SortedArray<Job> searchJobs(@RequestParam String searchTerm) throws FileNotFoundException, InterruptedException {
+    public SortedArray<Job> searchJobs(@RequestParam String searchTerm,
+                                       @RequestParam(required = false) String sortBy) throws FileNotFoundException, InterruptedException {
 
         String[] validatedSearchTerms = searchTerm.split(" ");
 
         searchFrequency.updateSearchFrequency(validatedSearchTerms);
-
-        return  pageRanking.searchInvertedIndexedData(validatedSearchTerms, jobData.getInitTrie(), jobData );
+        if(Objects.nonNull(sortBy) && sortBy.equals("salary"))
+            return  pageRanking.searchInvertedIndexedDataBySalary(validatedSearchTerms, jobData.getInitTrie(), jobData );
+        else
+            return  pageRanking.searchInvertedIndexedData(validatedSearchTerms, jobData.getInitTrie(), jobData );
     }
 
     //Crawling the data
@@ -110,17 +114,19 @@ public class FeatureController {
     @PostMapping(value = "/crawl")
     @ResponseBody
     public Boolean crawlData(@RequestBody CrawlerRequest crawlerRequest) throws InterruptedException {
-        System.out.println(Arrays.toString(crawlerRequest.getSearchTerms()))
-                ;
+        System.out.println(Arrays.toString(crawlerRequest.getSearchTerms()));
         System.out.println(crawlerRequest.isSimplyHired());
-         String jsonFilePath = "src/main/resources/database.json";
-         Path path = Paths.get(jsonFilePath);
-         try {
-             Files.delete(path);
-             System.out.println("JSON file deleted successfully.");
-         } catch (IOException e) {
-             System.err.println("Error deleting JSON file: " + e.getMessage());
-         }
+        //If delete is true then delete the file and create new one
+        if(crawlerRequest.isDelete()) {
+            String jsonFilePath = "src/main/resources/database.json";
+            Path path = Paths.get(jsonFilePath);
+            try {
+                Files.delete(path);
+                System.out.println("JSON file deleted successfully.");
+            } catch (IOException e) {
+                System.err.println("Error deleting JSON file: " + e.getMessage());
+            }
+        }
 
         boolean simplyHiredBoolean = crawlerRequest.isSimplyHired();
         boolean remoteOkBoolean = crawlerRequest.isRemoteOk();

@@ -56,8 +56,11 @@ public class DataValidation {
             //Validate Salary
             jobValidation.setMinSalary(validateField(String.valueOf(job.getMinSalary()), salaryRegex, allValid));
 
-            jobValidation.setMaxSalary(validateField(String.valueOf(job.getMaxSalary()), salaryRegex, allValid));
-
+            if(Objects.nonNull(job.getMaxSalary()) && job.getMaxSalary()>0) {
+                jobValidation.setMaxSalary(validateField(String.valueOf(job.getMaxSalary()), salaryRegex, allValid));
+            }else{
+                allValid.set(Boolean.FALSE);
+            }
             //Validate Location
             jobValidation.setLocation(validateField(job.getLocation(),locationRegex, allValid));
 
@@ -91,7 +94,11 @@ public class DataValidation {
         //Validate Salary
         jobValidation.setMinSalary(validateField(String.valueOf(job.getMinSalary()), salaryRegex, allValid));
 
-        jobValidation.setMaxSalary(validateField(String.valueOf(job.getMaxSalary()), salaryRegex, allValid));
+        if(Objects.nonNull(job.getMaxSalary()) && job.getMaxSalary()>0) {
+            jobValidation.setMaxSalary(validateField(String.valueOf(job.getMaxSalary()), salaryRegex, allValid));
+        }else{
+            allValid.set(Boolean.FALSE);
+        }
 
         //Validate Location
         jobValidation.setLocation(validateField(job.getLocation(),locationRegex, allValid));
