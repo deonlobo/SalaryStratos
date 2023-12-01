@@ -92,9 +92,9 @@ public class ScraperBot {
         try {
             // Attempt to read existing data from the file
             Collection<Job> existingJobs = readJsonFile(path);
-            System.out.println("Size "+existingJobs.size());
             // Append new data to existing data
             existingJobs.addAll(jobs);
+            System.out.println("Size after inserting jobs :"+existingJobs.size());
             jobsList.setJobs(existingJobs);
             // Convert the combined list to JSON
             String updatedJson = gson.toJson(jobsList);

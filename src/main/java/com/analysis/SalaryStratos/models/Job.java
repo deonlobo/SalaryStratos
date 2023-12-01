@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class Job {
 
-    private String id;
+    private String id = "0";
     private String jobTitle;
     private String companyName;
     private String jobWebsiteName;

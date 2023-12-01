@@ -1,7 +1,6 @@
 package com.analysis.SalaryStratos.features.scraper;
 
 import com.analysis.SalaryStratos.features.DataValidation;
-import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import com.analysis.SalaryStratos.models.Job;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,7 +33,7 @@ public class RemoteOk {
         /*List<String> jobTitle = Arrays.asList(
                 "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Medical", "Front End", "Full Stack", "Ops", "Design", "React", "InfoSec", "Marketing", "Mobile", "Content Writing", "SaaS", "Recruiter", "Full Time", "API", "Sales", "Ruby", "Education", "DevOps", "Stats", "Python", "Node", "English", "Non Tech", "Video", "Travel", "Quality Assurance", "Ecommerce", "Teaching", "Linux", "Java", "Crypto", "Junior", "Git", "Legal", "Android", "Accounting", "Admin", "Microsoft", "Excel", "PHP"
         );*/
-
+        Set<String> uniqueJobs = new HashSet<>();
         // Iterate through the jobTitle list using a for loop
         for (String title : searchTermsList) {
             String websiteUrl= "https://remoteok.com/";
@@ -71,7 +70,7 @@ public class RemoteOk {
                 //scraperBot.quit();
 
                 //System.out.println("Page Source:\n" + pageSource);
-                Collection<Job> validatedJobList = jsoupExtractor(pageSource);
+                Collection<Job> validatedJobList = jsoupExtractor(pageSource,uniqueJobs);
 
                 //Append Only the validated data to json database
                 bot.saveAndAppendToJson(validatedJobList);
@@ -87,7 +86,7 @@ public class RemoteOk {
 
     }
 
-    public static Collection<Job> jsoupExtractor(String pageSource){
+    public static Collection<Job> jsoupExtractor(String pageSource, Set<String> uniqueJobs){
         Collection<Job> jobList = new ArrayList<>();
         Document document = Jsoup.parse(pageSource);
         // Select all tr elements
@@ -177,7 +176,8 @@ public class RemoteOk {
             job.setId(dataId);
 
             //Add Only the validated data to the jobList
-            if(DataValidation.validateDataForOneObject(job)){
+            if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
+                uniqueJobs.add(job.getId());
                 jobList.add(job);
             }
         }
