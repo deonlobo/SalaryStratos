@@ -14,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
@@ -102,24 +106,48 @@ public class FeatureController {
     }
 
     //Crawling the data
+    @CrossOrigin
     @PostMapping(value = "/crawl")
     @ResponseBody
     public Boolean crawlData(@RequestBody CrawlerRequest crawlerRequest) throws InterruptedException {
-        // Access the parameters from crawlRequest and perform the necessary logic
+        System.out.println(Arrays.toString(crawlerRequest.getSearchTerms()))
+                ;
+        System.out.println(crawlerRequest.isSimplyHired());
+         String jsonFilePath = "src/main/resources/database.json";
+         Path path = Paths.get(jsonFilePath);
+         try {
+             Files.delete(path);
+             System.out.println("JSON file deleted successfully.");
+         } catch (IOException e) {
+             System.err.println("Error deleting JSON file: " + e.getMessage());
+         }
+
         boolean simplyHiredBoolean = crawlerRequest.isSimplyHired();
         boolean remoteOkBoolean = crawlerRequest.isRemoteOk();
         boolean glassDoorBoolean = crawlerRequest.isGlassDoor();
-        String[] searchTerms = crawlerRequest.getSearchTerms();
+
+        String[] searchTerms = getSearchTerms(crawlerRequest);
 
         if(simplyHiredBoolean)
-            simplyHiredScraper.crawlWebPage(crawlerRequest.getSearchTerms());
+            simplyHiredScraper.crawlWebPage(searchTerms);
         if(remoteOkBoolean)
-            remoteOk.crawlRemoteOk(crawlerRequest.getSearchTerms());
+            remoteOk.crawlRemoteOk(searchTerms);
         if(glassDoorBoolean)
-            glassDoorScraper.crawlWebPage(crawlerRequest.getSearchTerms());
+            glassDoorScraper.crawlWebPage(searchTerms);
 
         
         return true;
+    }
+
+    private static String[] getSearchTerms(CrawlerRequest crawlerRequest) {
+        String[] searchTerms = new String[]{
+                "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Front End"
+        };
+
+        if (Objects.nonNull(crawlerRequest.getSearchTerms()) && crawlerRequest.getSearchTerms().length > 0) {
+            searchTerms = crawlerRequest.getSearchTerms();
+        }
+        return searchTerms;
     }
 
 }
