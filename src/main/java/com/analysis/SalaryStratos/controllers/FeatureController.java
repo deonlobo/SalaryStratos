@@ -45,10 +45,11 @@ public class FeatureController {
     private  final SpellChecker spellChecker;
     @Autowired
     private  final PageRanking pageRanking;
+    @Autowired
+    private  final CompareRumTimes compareRumTimes;
 
 
-
-    public FeatureController(FetchAndUpdateData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency, SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper, JobDataTrie jobData, SpellChecker spellChecker, PageRanking pageRanking) {
+    public FeatureController(FetchAndUpdateData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency, SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper, JobDataTrie jobData, SpellChecker spellChecker, PageRanking pageRanking, CompareRumTimes compareRumTimes) {
         this.jobService = jobService;
         this.dataValidation = dataValidation;
         this.jobSearchAndSort = jobSearchAndSort;
@@ -59,6 +60,7 @@ public class FeatureController {
         this.jobData = jobData;
         this.spellChecker = spellChecker;
         this.pageRanking = pageRanking;
+        this.compareRumTimes = compareRumTimes;
     }
 
     @CrossOrigin
@@ -107,6 +109,16 @@ public class FeatureController {
             return  pageRanking.searchInvertedIndexedDataBySalary(validatedSearchTerms, jobData.getInitTrie(), jobData );
         else
             return  pageRanking.searchInvertedIndexedData(validatedSearchTerms, jobData.getInitTrie(), jobData );
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/runTimes")
+    public CompareRunTimesData compareRunTime(@RequestParam String searchTerm) throws FileNotFoundException, InterruptedException {
+
+        String[] validatedSearchTerms = searchTerm.split(" ");
+
+        return  compareRumTimes.compareRunTimeForSortingAlgorithms(validatedSearchTerms, jobData.getInitTrie(), jobData );
+
     }
 
     //Crawling the data
