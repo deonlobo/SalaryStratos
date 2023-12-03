@@ -43,7 +43,9 @@ public class SearchFrequency {
 
     public void updateSearchFrequency(String[] searchTerms) {
         for(String term: searchTerms) {
-            searchFrequencyMap.put(term, searchFrequencyMap.getOrDefault(term, 0) + 1);
+            if(Objects.nonNull(term) && !term.isBlank()) {
+                searchFrequencyMap.put(term, searchFrequencyMap.getOrDefault(term, 0) + 1);
+            }
 
         }
     }
