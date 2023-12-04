@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,9 +32,22 @@ public class JobDataTrie {
     private final GlassDoorScraper glassDoorScraper;
     private TrieDS jobsDataTrie;
     String[] searchTermsList = new String[]{
-            "Engineer"
-//        "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Front End"
+            "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Front End"
     };
+
+    // List of common English stop words
+    Set<String> stopWords = new HashSet<>(Arrays.asList(
+            "i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
+            "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its", "itself",
+            "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom", "this", "that", "these",
+            "those", "am", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "having", "do",
+            "does", "did", "doing", "a", "an", "the", "and", "but", "if", "or", "because", "as", "until", "while",
+            "of", "at", "by", "for", "with", "about", "against", "between", "into", "through", "during", "before",
+            "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again",
+            "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each",
+            "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than",
+            "too", "very", "s", "t", "can", "will", "just", "don", "should", "now", "d", "ll", "m", "o", "re", "ve", "y", "ain", "aren", "couldn", "didn", "doesn", "hadn", "hasn", "haven", "isn", "ma", "mightn", "mustn", "needn", "shan", "shouldn", "wasn", "weren", "won", "wouldn"
+    ));
 
     public JobDataTrie(SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper) {
         this.simplyHiredScraper = simplyHiredScraper;
@@ -64,21 +80,22 @@ public class JobDataTrie {
         ArrayList<Job> jobsList = getJobsDataFromJson();
         for (Job job: jobsList) {
             String id = job.getId();
-            String description = job.getJobDescription().replaceAll("\\\\n|\\n", " ");;
+            String description = job.getJobDescription().replaceAll("\\\\n|\\n", " ").replaceAll(",","").replaceAll("\\.","");
 
             String[] descriptionTokens = description.trim().split(" ");
 
             for(String token: descriptionTokens) {
+                if (!stopWords.contains(token.toLowerCase())) {
+                    String pattern = "[^a-zA-Z]+";
 
-                String pattern = "[^a-zA-Z]+";
+                    Pattern regex = Pattern.compile(pattern);
 
-                Pattern regex = Pattern.compile(pattern);
+                    Matcher matcher = regex.matcher(token);
 
-                Matcher matcher = regex.matcher(token);
+                    String processedString = matcher.replaceAll("").toLowerCase();
 
-                String processedString = matcher.replaceAll("").toLowerCase();
-
-                jobsDataTrie.insertIntoTrie(processedString, id);
+                    jobsDataTrie.insertIntoTrie(processedString, id);
+                }
             }
 
         }
