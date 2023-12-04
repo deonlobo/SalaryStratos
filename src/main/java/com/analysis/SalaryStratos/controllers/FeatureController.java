@@ -67,9 +67,9 @@ public class FeatureController {
     public List<SpellCheckerResponse> getCorrectWord(@RequestParam String searchTerm, @RequestParam int suggestionCount) {
         List<String> validatedSearchTerms = DataValidation.validateRequest(searchTerm);
         List<SpellCheckerResponse> response = new ArrayList<>();
-
+        System.out.println(validatedSearchTerms.isEmpty());
         if (validatedSearchTerms.isEmpty()) {
-            SpellCheckerResponse res = new SpellCheckerResponse("", null);
+            SpellCheckerResponse res = new SpellCheckerResponse(null, null);
             res.setValidResponse(false);
             response.add(res);
 
@@ -79,6 +79,7 @@ public class FeatureController {
 
             TreeMap<Integer, TreeMap<Integer, TreeSet<String>>> list = spellChecker.suggestSimilarWord(eachString,jobData.getInitTrie(), suggestionCount);
             SpellCheckerResponse res = new SpellCheckerResponse(eachString, list);
+            res.setValidResponse(true);
             response.add(res);
         }
 
@@ -109,13 +110,14 @@ public class FeatureController {
 
         String[] validatedSearchTerms = searchTerm.split(" ");
 
-        searchFrequency.updateSearchFrequency(validatedSearchTerms);
 
         if(Objects.nonNull(sortBy) && sortBy.equals("salary")) {
             return pageRanking.searchInvertedIndexedDataBySalary(validatedSearchTerms, jobData.getInitTrie(), jobData);
         }
-        else
+        else {
+            searchFrequency.updateSearchFrequency(validatedSearchTerms);
             return  pageRanking.searchInvertedIndexedData(validatedSearchTerms, jobData.getInitTrie(), jobData );
+        }
     }
 
     @CrossOrigin

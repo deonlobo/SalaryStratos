@@ -47,7 +47,6 @@ public class SpellChecker {
         if (inputWord.isEmpty() || invalid.contains(inputWord.toLowerCase()))
             return null;
         String s = inputWord.toLowerCase();
-        TreeMap<Integer, TreeMap<Integer, TreeSet<String>>> res;
         TreeMap<Integer, TreeMap<Integer, TreeSet<String>>> map = new TreeMap<>();
         TrieNode node = trie.searchInTrie(s);
         if(node == null) {
@@ -62,11 +61,10 @@ public class SpellChecker {
                     map.put(dist, similarWords);
                 }
             }
-            res= map;
+            return map;
         } else {
-            res = null;
+            return null;
         }
-        return res;
     }
 
 }

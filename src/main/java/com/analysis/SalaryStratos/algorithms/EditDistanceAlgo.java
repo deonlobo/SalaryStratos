@@ -24,17 +24,4 @@ public class EditDistanceAlgo {
         return dp[word1.length()][word2.length()];
     }
 
-    public static List<String> getClosestWords(String word, List<String> dictionary, int maxDistance) {
-        List<String> closestWords = new ArrayList<>();
-
-        for (String dictWord : dictionary) {
-            int distance = calculateEditDistance(word, dictWord);
-            if (distance <= maxDistance) {
-                closestWords.add(dictWord);
-            }
-        }
-
-        return closestWords;
-    }
-
 }

@@ -138,7 +138,6 @@ public class DataValidation {
                 finalStringSet.add(trimmedString);
             }
         }
-
         return finalStringSet;
 
     }

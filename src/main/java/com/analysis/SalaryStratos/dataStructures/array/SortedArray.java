@@ -7,7 +7,7 @@ import java.util.List;
 
 public class SortedArray<T> {
     private List<T> dataList;
-    private Comparator<T> comparator;
+    private final Comparator<T> comparator;
 
     public SortedArray(Comparator<T> comparator) {
         this.dataList = new ArrayList<>();
