@@ -15,7 +15,7 @@ public class WordCompletion {
         WordSuggestionResponse suggestions = new WordSuggestionResponse();
 
         if (validatedSearchTerms.isEmpty()) {
-            System.out.println("IsEmpty");
+            System.out.println("Search Terms are Invalid");
             suggestions.setResponseValid(false);
         } else {
             List<SuggestionModel> suggestedWordsList = new ArrayList<>();

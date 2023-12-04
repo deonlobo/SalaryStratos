@@ -10,8 +10,8 @@ import java.util.*;
 public class SearchFrequency {
 
     //Uses LRUCache class
-    private int CACHESIZE = 5;
-    private int RETURNARRAYSIZE = 4;
+    private int CACHESIZE = 50;
+    private int RETURNARRAYSIZE = 10;
     private final LRUCache<String, Integer> searchFrequencyMap = new LRUCache<>(CACHESIZE); // Adjust the cache size as needed
 
     public SortedArray<WordFrequency> displaySearchFrequencies() {

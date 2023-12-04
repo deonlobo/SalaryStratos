@@ -16,6 +16,16 @@ public class Job {
     private int  wordFrequency = 0;
     private String  word;
 
+    private  int cost;
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
     public String getWord() {
         return word;
     }

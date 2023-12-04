@@ -25,7 +25,6 @@ public class SortedArray<T> {
     // Insert an element while keeping the list sorted
     public void insert(T element) {
         int index = Collections.binarySearch(dataList, element, comparator.reversed());
-        System.out.println("Index: " + index);
         if (index < 0) {
             index = -index - 1;  // Adjust the index for insertion
         }
@@ -42,10 +41,5 @@ public class SortedArray<T> {
 
     public  void setDataList(List<T> lst) {
         this.dataList = lst;
-    }
-    public void printData() {
-        for (T element : dataList) {
-            System.out.println(element.toString());
-        }
     }
 }

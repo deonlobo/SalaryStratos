@@ -18,7 +18,6 @@ public class PageRanking {
 
         SortedArray<Job> sortedJobs = new SortedArray<>(Comparator.comparingInt(Job::getWordFrequency));
         for (String term: searchTerms) {
-            System.out.println(term);
             TrieNode node = trie.searchInTrie(term.toLowerCase());
             Set<String> jobIds = node.getJobIds();
             TreeMap<String, Integer> wordFrequency = node.getWordFrequency();
@@ -42,11 +41,7 @@ public class PageRanking {
                         sortedJobs.insert(jobById);
 
                     }
-
-
-
                 }
-
             }
         }
 
@@ -56,9 +51,8 @@ public class PageRanking {
     public SortedArray<Job> searchInvertedIndexedDataBySalary(String[] searchTerms, TrieDS trie, JobDataTrie jobData) throws FileNotFoundException, InterruptedException {
         ArrayList<Job> jobs= jobData.getJobsDataFromJson();
 
-        SortedArray<Job> sortedJobs = new SortedArray<>(Comparator.comparingInt(Job::getMaxSalary));
+        SortedArray<Job> sortedJobs = new SortedArray<>(Comparator.comparingInt(Job::getCost));
         for (String term: searchTerms) {
-            System.out.println(term);
             TrieNode node = trie.searchInTrie(term.toLowerCase());
             Set<String> jobIds = node.getJobIds();
             TreeMap<String, Integer> wordFrequency = node.getWordFrequency();
@@ -73,13 +67,16 @@ public class PageRanking {
                     if ( jobById.getWordFrequency() == 0) {
                         jobById.setWord(term);
                         jobById.setWordFrequency(wordFrequency.get(jobId));
+                        jobById.setCost(wordFrequency.get(jobId) + jobById.getMaxSalary());
 
                         sortedJobs.insert(jobById);
                     } else {
                         sortedJobs.delete(jobById);
                         jobById.setWord(jobById.getWord() + ", " + term);
                         jobById.setWordFrequency(jobById.getWordFrequency() + wordFrequency.get(jobId));
+                        jobById.setCost(jobById.getCost() + wordFrequency.get(jobId));
                         sortedJobs.insert(jobById);
+
 
                     }
                 }

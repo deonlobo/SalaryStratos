@@ -1,7 +1,6 @@
 package com.analysis.SalaryStratos.features.scraper;
 
 import com.analysis.SalaryStratos.features.DataValidation;
-import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import com.analysis.SalaryStratos.models.Job;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -49,10 +48,7 @@ public class GlassDoorScraper {
 
             String pageSource = scraperBot.getPageSource();
             liCount = scrapJobLinks(pageSource, liCount);
-
-            System.out.println("LIcount:" + liCount);
             while (jobLinksQueue.size() < 100) {
-                System.out.println(jobLinksQueue.size());
                 try {
 
                     scraperBot

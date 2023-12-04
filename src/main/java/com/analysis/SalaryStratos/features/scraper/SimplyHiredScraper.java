@@ -1,8 +1,6 @@
 package com.analysis.SalaryStratos.features.scraper;
 
-import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
 import com.analysis.SalaryStratos.features.DataValidation;
-import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import com.analysis.SalaryStratos.models.Job;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -69,7 +67,8 @@ public class SimplyHiredScraper {
             bot.saveAndAppendToJson(jobsCollection);
         }
 
-//        scrapeWebPage(pageSource);
+
+        scraperBot.close();
 
 
     }
@@ -174,7 +173,6 @@ public class SimplyHiredScraper {
             maxSalary = (int) (Double.parseDouble(upperSalaryStr)*40*4*12);
         } else if (jobSalary.matches(regexHourlyFrom)) {
             String lowerSalaryStr = jobSalary.replaceAll(regexHourlyFrom, "$1");
-            System.out.println(lowerSalaryStr);
             // Convert to an integer
             maxSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*4*12);
 

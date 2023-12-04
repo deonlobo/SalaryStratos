@@ -4,6 +4,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class SpellCheckerResponse {
+
+    boolean isValidResponse;
     String word;
 
     TreeMap<Integer, TreeMap<Integer, TreeSet<String>>> correctWords;
@@ -11,6 +13,14 @@ public class SpellCheckerResponse {
     public SpellCheckerResponse(String word, TreeMap<Integer, TreeMap<Integer, TreeSet<String>>> correctWords) {
         this.word = word;
         this.correctWords = correctWords;
+    }
+
+    public boolean isValidResponse() {
+        return isValidResponse;
+    }
+
+    public void setValidResponse(boolean validResponse) {
+        isValidResponse = validResponse;
     }
 
     public String getWord() {

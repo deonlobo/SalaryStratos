@@ -64,8 +64,6 @@ public class TrieDS {
             }
             node = node.children.get(c);
         }
-        System.out.println(node.isEndOfWord);
-        System.out.println(node.children.keySet());
         if(node.children == null) {
             return null;
         }

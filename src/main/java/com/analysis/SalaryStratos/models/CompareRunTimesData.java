@@ -4,6 +4,9 @@ public class CompareRunTimesData {
     long mergeSort;
     long binarySearch;
 
+    long quickSort;
+
+
     public long getMergeSort() {
         return mergeSort;
     }
@@ -28,6 +31,5 @@ public class CompareRunTimesData {
         this.quickSort = quickSort;
     }
 
-    long quickSort;
 
 }

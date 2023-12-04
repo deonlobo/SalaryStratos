@@ -1,6 +1,7 @@
 package com.analysis.SalaryStratos.controllers;
 
 import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
+import com.analysis.SalaryStratos.dataStructures.trie.TrieDS;
 import com.analysis.SalaryStratos.models.WordFrequency;
 import com.analysis.SalaryStratos.features.*;
 import com.analysis.SalaryStratos.features.scraper.GlassDoorScraper;
@@ -8,7 +9,6 @@ import com.analysis.SalaryStratos.features.scraper.RemoteOk;
 import com.analysis.SalaryStratos.features.scraper.SimplyHiredScraper;
 import com.analysis.SalaryStratos.models.*;
 import com.analysis.SalaryStratos.features.DataValidation;
-import com.analysis.SalaryStratos.features.FetchAndUpdateData;
 import com.analysis.SalaryStratos.services.JobDataTrie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +23,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class FeatureController {
-    @Autowired
-    private final FetchAndUpdateData jobService;
-    @Autowired
-    private final DataValidation dataValidation;
-    @Autowired
-    private final JobSearchAndSort jobSearchAndSort;
     @Autowired
     private final SearchFrequency searchFrequency;
     @Autowired
@@ -46,13 +40,18 @@ public class FeatureController {
     @Autowired
     private  final PageRanking pageRanking;
     @Autowired
-    private  final CompareRumTimes compareRumTimes;
+    private  final CompareRunTimes compareRunTimes;
 
 
-    public FeatureController(FetchAndUpdateData jobService, DataValidation dataValidation, JobSearchAndSort jobSearchAndSort, SearchFrequency searchFrequency, SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper, JobDataTrie jobData, SpellChecker spellChecker, PageRanking pageRanking, CompareRumTimes compareRumTimes) {
-        this.jobService = jobService;
-        this.dataValidation = dataValidation;
-        this.jobSearchAndSort = jobSearchAndSort;
+    public FeatureController(SearchFrequency searchFrequency,
+                             SimplyHiredScraper simplyHiredScraper,
+                             RemoteOk remoteOk,
+                             GlassDoorScraper glassDoorScraper,
+                             JobDataTrie jobData,
+                             SpellChecker spellChecker,
+                             PageRanking pageRanking,
+                             CompareRunTimes compareRunTimes) {
+
         this.searchFrequency = searchFrequency;
         this.simplyHiredScraper = simplyHiredScraper;
         this.remoteOk = remoteOk;
@@ -60,17 +59,23 @@ public class FeatureController {
         this.jobData = jobData;
         this.spellChecker = spellChecker;
         this.pageRanking = pageRanking;
-        this.compareRumTimes = compareRumTimes;
+        this.compareRunTimes = compareRunTimes;
     }
 
     @CrossOrigin
     @PostMapping(value = "/correctWords")
     public List<SpellCheckerResponse> getCorrectWord(@RequestParam String searchTerm, @RequestParam int suggestionCount) {
-        System.out.println(searchTerm + " " + suggestionCount);
         List<String> validatedSearchTerms = DataValidation.validateRequest(searchTerm);
         List<SpellCheckerResponse> response = new ArrayList<>();
+
+        if (validatedSearchTerms.isEmpty()) {
+            SpellCheckerResponse res = new SpellCheckerResponse("", null);
+            res.setValidResponse(false);
+            response.add(res);
+
+            return response;
+        }
         for(String eachString: validatedSearchTerms) {
-            System.out.println("each: " + eachString);
 
             TreeMap<Integer, TreeMap<Integer, TreeSet<String>>> list = spellChecker.suggestSimilarWord(eachString,jobData.getInitTrie(), suggestionCount);
             SpellCheckerResponse res = new SpellCheckerResponse(eachString, list);
@@ -105,19 +110,20 @@ public class FeatureController {
         String[] validatedSearchTerms = searchTerm.split(" ");
 
         searchFrequency.updateSearchFrequency(validatedSearchTerms);
-        if(Objects.nonNull(sortBy) && sortBy.equals("salary"))
-            return  pageRanking.searchInvertedIndexedDataBySalary(validatedSearchTerms, jobData.getInitTrie(), jobData );
+
+        if(Objects.nonNull(sortBy) && sortBy.equals("salary")) {
+            return pageRanking.searchInvertedIndexedDataBySalary(validatedSearchTerms, jobData.getInitTrie(), jobData);
+        }
         else
             return  pageRanking.searchInvertedIndexedData(validatedSearchTerms, jobData.getInitTrie(), jobData );
     }
 
     @CrossOrigin
-    @GetMapping(value = "/runTimes")
+    @PostMapping(value = "/runTimes")
     public CompareRunTimesData compareRunTime(@RequestParam String searchTerm) throws FileNotFoundException, InterruptedException {
 
         String[] validatedSearchTerms = searchTerm.split(" ");
-
-        return  compareRumTimes.compareRunTimeForSortingAlgorithms(validatedSearchTerms, jobData.getInitTrie(), jobData );
+        return  compareRunTimes.compareRunTimeForSortingAlgorithms(validatedSearchTerms, jobData.getInitTrie(), jobData );
 
     }
 
@@ -125,9 +131,7 @@ public class FeatureController {
     @CrossOrigin
     @PostMapping(value = "/crawl")
     @ResponseBody
-    public Boolean crawlData(@RequestBody CrawlerRequest crawlerRequest) throws InterruptedException {
-        System.out.println(Arrays.toString(crawlerRequest.getSearchTerms()));
-        System.out.println(crawlerRequest.isSimplyHired());
+    public Boolean crawlData(@RequestBody CrawlerRequest crawlerRequest) throws InterruptedException, FileNotFoundException {
         //If delete is true then delete the file and create new one
         if(crawlerRequest.isDelete()) {
             String jsonFilePath = "src/main/resources/database.json";
@@ -146,14 +150,24 @@ public class FeatureController {
 
         String[] searchTerms = getSearchTerms(crawlerRequest);
 
-        if(simplyHiredBoolean)
+        if(simplyHiredBoolean) {
+            System.out.println("SimplyHired Crawling Started");
             simplyHiredScraper.crawlWebPage(searchTerms);
-        if(remoteOkBoolean)
+            System.out.println("SimplyHired Crawling Ended");
+        }
+        if(remoteOkBoolean) {
+            System.out.println("RemoteOk Crawling Started");
             remoteOk.crawlRemoteOk(searchTerms);
-        if(glassDoorBoolean)
+            System.out.println("RemoteOk Crawling Ended");
+        }
+        if(glassDoorBoolean) {
+            System.out.println("Glassdoor Crawling Started");
             glassDoorScraper.crawlWebPage(searchTerms);
+            System.out.println("Glassdoor Crawling Ended");
+        }
 
-        
+        TrieDS trie = jobData.initializeTrie();
+        spellChecker.initializeSpellChecker(trie);
         return true;
     }
 
