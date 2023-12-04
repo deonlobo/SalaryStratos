@@ -64,9 +64,9 @@ public class JobDataTrie {
         ArrayList<Job> jobsList = getJobsDataFromJson();
         for (Job job: jobsList) {
             String id = job.getId();
-            String description = job.getJobDescription();
+            String description = job.getJobDescription().replaceAll("\\\\n|\\n", " ");;
 
-            String[] descriptionTokens = description.split(" ");
+            String[] descriptionTokens = description.trim().split(" ");
 
             for(String token: descriptionTokens) {
 
