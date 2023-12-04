@@ -21,7 +21,7 @@ public class RemoteOk {
     static String JOBWEBSITENAME = "Remote Ok";
 
 
-    public void crawlRemoteOk(String[] searchTermsList) throws InterruptedException {
+    public void crawlWebPage(String[] searchTermsList) throws InterruptedException {
         /*List<String> jobTitle = Arrays.asList(
                 "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Medical", "Front End", "Full Stack", "Ops", "Design", "React", "InfoSec", "Marketing", "Mobile", "Content Writing", "SaaS", "Recruiter", "Full Time", "API", "Sales", "Ruby", "Education", "DevOps", "Stats", "Python", "Node", "English", "Non Tech", "Video", "Travel", "Quality Assurance", "Ecommerce", "Teaching", "Linux", "Java", "Crypto", "Junior", "Git", "Legal", "Android", "Accounting", "Admin", "Microsoft", "Excel", "PHP"
         );*/
@@ -61,7 +61,7 @@ public class RemoteOk {
 
 
                 //System.out.println("Page Source:\n" + pageSource);
-                Collection<Job> validatedJobList = jsoupExtractor(pageSource,uniqueJobs);
+                Collection<Job> validatedJobList = scrapeWebPage(pageSource,uniqueJobs);
 
                 //Append Only the validated data to json database
                 bot.saveAndAppendToJson(validatedJobList);
@@ -71,7 +71,7 @@ public class RemoteOk {
         }
     }
 
-    public static Collection<Job> jsoupExtractor(String pageSource, Set<String> uniqueJobs){
+    public static Collection<Job> scrapeWebPage(String pageSource, Set<String> uniqueJobs){
         Collection<Job> jobList = new ArrayList<>();
 
         try{
