@@ -162,6 +162,7 @@ public class RemoteOk {
 
                 job.setId(dataId);
 
+                //System.out.println("Job with id - "+job.getId()+" scraped");
                 //Add Only the validated data to the jobList
                 if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
                     uniqueJobs.add(job.getId());

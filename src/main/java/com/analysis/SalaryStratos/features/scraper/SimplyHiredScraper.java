@@ -199,6 +199,7 @@ public class SimplyHiredScraper {
         job.setMinSalary(minSalary);
         job.setMaxSalary(maxSalary);
 
+        //System.out.println("Job with id - "+job.getId()+" scraped");
         return  job;
     }
 

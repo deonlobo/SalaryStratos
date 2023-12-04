@@ -108,6 +108,7 @@ public class DataValidation {
 
         jobValidation.setAllFieldsValid(allValid.get());
 
+        //System.out.println("Is Data Valid : " + allValid);
         return allValid.get();
     }
 
