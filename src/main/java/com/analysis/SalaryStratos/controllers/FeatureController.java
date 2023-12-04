@@ -159,7 +159,7 @@ public class FeatureController {
         }
         if(remoteOkBoolean) {
             System.out.println("RemoteOk Crawling Started");
-            remoteOk.crawlRemoteOk(searchTerms);
+            remoteOk.crawlWebPage(searchTerms);
             System.out.println("RemoteOk Crawling Ended");
         }
         if(glassDoorBoolean) {

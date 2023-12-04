@@ -65,7 +65,7 @@ public class JobDataTrie {
         } catch (FileNotFoundException e) {
             //File doesnt exist
             simplyHiredScraper.crawlWebPage(searchTermsList);
-            remoteOk.crawlRemoteOk(searchTermsList);
+            remoteOk.crawlWebPage(searchTermsList);
             glassDoorScraper.crawlWebPage(searchTermsList);
             jobs = gson.fromJson(new FileReader("src/main/resources/database.json"), Jobs.class);
         }
