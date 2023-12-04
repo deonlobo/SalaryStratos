@@ -10,8 +10,6 @@ public class TrieDS {
 
     Map<String, Integer> dict = new HashMap<>();
 
-
-
     public TrieDS() {
         this.root = new TrieNode();
     }

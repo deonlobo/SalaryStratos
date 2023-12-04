@@ -28,49 +28,50 @@ public class SimplyHiredScraper {
         Set<String> uniqueJobs = new HashSet<>();
 
         for(String searchTerm: searchTerms) {
-            scraperBot.get(websiteUrl + "/search?q=" + searchTerm);
-            String pageSource = scraperBot.getPageSource();
-            scrapJobLinks(pageSource, jobLinksQueue);
-            while (jobLinksQueue.size() < 100) {
-                try {
-                    String nextLink = scraperBot
-                            .findElement(By.xpath("//nav[@data-testid='pageNumberContainer']//span[@aria-current='true']"))
-                            .findElement(By.xpath("following-sibling::*"))
-                            .getAttribute("href");
-                    scraperBot.get(nextLink);
-                    scraperBotWithWait
-                            .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@id='job-list']")));
-                    pageSource = scraperBot.getPageSource();
-                    scrapJobLinks(pageSource, jobLinksQueue);
-                } catch (NoSuchElementException e) {
-                    System.out.println("Error while getting links: " + e);
-                    continue;
+            try {
+                scraperBot.get(websiteUrl + "/search?q=" + searchTerm);
+                String pageSource = scraperBot.getPageSource();
+                scrapJobLinks(pageSource, jobLinksQueue);
+                while (jobLinksQueue.size() < 100) {
+                    try {
+                        String nextLink = scraperBot
+                                .findElement(By.xpath("//nav[@data-testid='pageNumberContainer']//span[@aria-current='true']"))
+                                .findElement(By.xpath("following-sibling::*"))
+                                .getAttribute("href");
+                        scraperBot.get(nextLink);
+                        scraperBotWithWait
+                                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@id='job-list']")));
+                        pageSource = scraperBot.getPageSource();
+                        scrapJobLinks(pageSource, jobLinksQueue);
+                    } catch (NoSuchElementException e) {
+                        System.out.println("Error while getting links: " + e);
+                        continue;
+                    }
+
                 }
+                Collection<Job> jobsCollection = new ArrayList<>();
 
-            }
-            Collection<Job> jobsCollection = new ArrayList<>();
+                for (String jobLink: jobLinksQueue) {
+                    scraperBot.get(jobLink);
+                    String jobPageSource = scraperBot.getPageSource();
 
-            for (String jobLink: jobLinksQueue) {
-                scraperBot.get(jobLink);
-                String jobPageSource = scraperBot.getPageSource();
-
-                Job job = scrapeJobData(jobPageSource, jobLink);
+                    Job job = scrapeJobData(jobPageSource, jobLink);
 
 
-                //Add Only the validated data to the jobList
-                if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
-                    uniqueJobs.add(job.getId());
-                    jobsCollection.add(job);
+                    //Add Only the validated data to the jobList
+                    if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
+                        uniqueJobs.add(job.getId());
+                        jobsCollection.add(job);
+                    }
                 }
+                bot.saveAndAppendToJson(jobsCollection);
+
+            } catch (Exception e) {
+                System.out.println("Error: " + e );
             }
 
-            bot.saveAndAppendToJson(jobsCollection);
+
         }
-
-
-        scraperBot.close();
-
-
     }
 
     public void scrapJobLinks(String pageSource, Queue<String> jobLinksQueue) {
