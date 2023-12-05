@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 @Service
 public class DataValidation {
+    @Autowired
+    private final FetchAndUpdateData jobService;
 
     List<JobValidation> jobValidationList = new ArrayList<>();
     //Make sure that they contain only letters and spaces.
@@ -28,6 +30,10 @@ public class DataValidation {
     //Ensure there are at least 10 words (one or more non-whitespace characters followed by zero or more whitespace characters){10,}
     static String descriptionRegex = "(\\S+\\s*){10,}";
 
+
+    public DataValidation(FetchAndUpdateData jobService) {
+        this.jobService = jobService;
+    }
 
     /*//Data validation using regular expression
     public List<JobValidation> validateScrapedData(){
