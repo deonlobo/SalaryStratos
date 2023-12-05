@@ -77,38 +77,46 @@ public class DataValidation {
     //Data validation using regular expression for One Object
     public static Boolean validateDataForOneObject(Job job){
 
-        JobValidation jobValidation = new JobValidation();
-        AtomicBoolean allValid = new AtomicBoolean(true);
-        jobValidation.setId(job.getId());
+        try{
+            JobValidation jobValidation = new JobValidation();
+            AtomicBoolean allValid = new AtomicBoolean(true);
+            jobValidation.setId(job.getId());
 
 
-        //Validate Job Title
-        jobValidation.setJobTitle(validateField(job.getJobTitle(),jobTitleRegex, allValid));
+            //Validate Job Title
+            jobValidation.setJobTitle(validateField(job.getJobTitle(),jobTitleRegex, allValid));
 
-        //Validate Company Name
-        jobValidation.setCompanyName(validateField(job.getCompanyName(),companyNameRegex, allValid));
+            //Validate Company Name
+            jobValidation.setCompanyName(validateField(job.getCompanyName(),companyNameRegex, allValid));
 
-        //Validate Link
-        jobValidation.setJobWebsiteLink(validateField(job.getJobWebsiteLink(),linkRegex, allValid));
+            //Validate Link
+            jobValidation.setJobWebsiteLink(validateField(job.getJobWebsiteLink(),linkRegex, allValid));
 
-        //Validate Salary
-        jobValidation.setMinSalary(validateField(String.valueOf(job.getMinSalary()), salaryRegex, allValid));
+            //Validate Salary
+            jobValidation.setMinSalary(validateField(String.valueOf(job.getMinSalary()), salaryRegex, allValid));
 
-        if(Objects.nonNull(job.getMaxSalary()) && job.getMaxSalary()>0) {
-            jobValidation.setMaxSalary(validateField(String.valueOf(job.getMaxSalary()), salaryRegex, allValid));
-        }else{
-            allValid.set(Boolean.FALSE);
+            if(Objects.nonNull(job.getMaxSalary()) && job.getMaxSalary()>0) {
+                jobValidation.setMaxSalary(validateField(String.valueOf(job.getMaxSalary()), salaryRegex, allValid));
+            }else{
+                allValid.set(Boolean.FALSE);
+            }
+
+            //Validate Location
+            jobValidation.setLocation(validateField(job.getLocation(),locationRegex, allValid));
+
+            //Validate Description
+            jobValidation.setJobDescription(validateField(job.getJobDescription(),descriptionRegex, allValid));
+
+            jobValidation.setAllFieldsValid(allValid.get());
+
+            return allValid.get();
+        } catch (Exception e) {
+            System.out.println("Error While Validation");
+
+            return false;
         }
 
-        //Validate Location
-        jobValidation.setLocation(validateField(job.getLocation(),locationRegex, allValid));
 
-        //Validate Description
-        jobValidation.setJobDescription(validateField(job.getJobDescription(),descriptionRegex, allValid));
-
-        jobValidation.setAllFieldsValid(allValid.get());
-
-        return allValid.get();
     }
 
     // Generic validation method for fields using regex

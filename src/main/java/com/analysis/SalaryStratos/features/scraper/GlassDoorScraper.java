@@ -37,46 +37,218 @@ public class GlassDoorScraper {
             String searchUrl = "https://www.glassdoor.ca/Job/" + searchTerm + "-jobs-SRCH_KO0,"+ searchTerm.length() +".htm";
             scraperBot.get(searchUrl);
 
-            scraperBotWithWait
-                    .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='JAModal']")));
-            WebElement modelElement = scraperBot.findElement(By.xpath("//div[@id='JAModal']"));
+            try {
+                scraperBotWithWait
+                        .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='JAModal']")));
+                WebElement modelElement = scraperBot.findElement(By.xpath("//div[@id='JAModal']"));
 
 
-            ((JavascriptExecutor) scraperBot).executeScript("arguments[0].style.display='none';", modelElement);
+                ((JavascriptExecutor) scraperBot).executeScript("arguments[0].style.display='none';", modelElement);
+            } catch (Exception e) {
+                System.out.println("Popup Not Found");
+            }
+
 
             Thread.sleep(1000);
 
             String pageSource = scraperBot.getPageSource();
             liCount = scrapJobLinks(pageSource, liCount);
-            while (jobLinksQueue.size() < 100) {
+            int sameSize = 0;
+            int jobSize = 0;
+            while (jobSize < 100) {
                 try {
 
-                    scraperBot
-                            .findElement(By.xpath("//button[span/span[contains(text(), 'Show more jobs')]]"))
-                            .click();
-                    scraperBotWithWait
-                            .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class='JobsList_jobsList__Ey2Vo']>li[" + (liCount) + "]")));
+                    try{
+                        scraperBotWithWait
+                                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[span/span[contains(text(), 'Show more jobs')]]")));
+                        WebElement nextButton = scraperBot
+                                .findElement(By.xpath("//button[span/span[contains(text(), 'Show more jobs')]]"));
+
+                        nextButton.click();
+                    } catch (ElementClickInterceptedException e) {
+                        System.out.println("Popup Found");
+
+                        scraperBotWithWait
+                                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='JAModal']")));
+                        WebElement modelElement = scraperBot.findElement(By.xpath("//div[@id='JAModal']"));
+                        ((JavascriptExecutor) scraperBot).executeScript("arguments[0].style.display='none';", modelElement);
+
+                    }
+
+
+                    Thread.sleep(5000);
+
                     pageSource = scraperBot.getPageSource();
-                    liCount = scrapJobLinks(pageSource, liCount);
-                } catch (NoSuchElementException e) {
+                    Document pageDoc = Jsoup.parse(pageSource);
+
+                    Elements liElements = pageDoc.select("ul[class=JobsList_jobsList__Ey2Vo]>li");
+
+                    if(liElements.size() == jobSize) {
+                        sameSize++;
+                    }
+                    jobSize = liElements.size();
+
+                    if (sameSize == 3) {
+                        System.out.println("Same after show more");
+                        jobSize = 100;
+                    }
+
+                } catch (Exception e) {
                     System.out.println("Error while getting links: " + e);
+                    jobSize = 100;
                     continue;
                 }
             }
+            Set<String> uniqueJobs = new HashSet<>();
+            Collection<Job> jobsCollection = new ArrayList<>();
+            pageSource = scraperBot.getPageSource();
+            Document pageDoc = Jsoup.parse(pageSource);
+            int jobCounter = 0;
+            try {
 
-            for(String link: jobLinksQueue) {
-                System.out.println(link);
+                Elements liElements = pageDoc.select("ul[class=JobsList_jobsList__Ey2Vo]>li");
+
+                for(Element li: liElements) {
+
+                    String jobId = "";
+                    try {
+
+
+
+                        List<WebElement> lst =  scraperBot
+                                .findElements(By.xpath("//ul[@class='JobsList_jobsList__Ey2Vo']/li"));
+                        Thread.sleep(500);
+
+                        try {
+                            scraperBotWithWait
+                                    .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='JAModal']")));
+                            WebElement modelElement = scraperBot.findElement(By.xpath("//div[@id='JAModal']"));
+
+
+                            ((JavascriptExecutor) scraperBot).executeScript("arguments[0].style.display='none';", modelElement);
+                        } catch (Exception e) {
+                            System.out.println("Popup Not Found");
+                        }
+                        Thread.sleep(500);
+
+                        lst.get(jobCounter).click();
+
+                        Thread.sleep(500);
+
+                        pageSource = scraperBot.getPageSource();
+                        pageDoc = Jsoup.parse(pageSource);
+                        Elements aLink = li.select("a[class=JobCard_seoLink__WdqHZ]");
+                        String jobLink = !aLink.isEmpty() ? aLink.get(0).attr("href"): "";
+                        String jobIdRegex = "jl=(\\d+)";
+                        Pattern jobIdPattern = Pattern.compile(jobIdRegex);
+
+                        Matcher jobIdMatcher = jobIdPattern.matcher(jobLink);
+                        ;
+                        if (jobIdMatcher.find()) {
+                            jobId = jobIdMatcher.group(1);
+                        } else {
+                            continue;
+                        }
+
+                        String jobTitle = li.select("a[class=JobCard_seoLink__WdqHZ]").text();
+
+                        String jobCompanyName = li.select("span[class=EmployerProfile_employerName__Xemli]").text();
+
+                        String jobCompanyLocation = li.select("div[class=JobCard_location__N_iYE]").text();
+
+                        String jobWebsiteName = "GlassDoor";
+
+                        String jobSalary = li.select("div[class=JobCard_salaryEstimate___m9kY]").text();
+
+                        int minSalary = 0;
+                        int maxSalary = 0;
+                        String regexYearlyWithK = "\\$([\\d.]+)K - \\$([\\d.]+)K \\(Employer Est.\\)";
+                        String regexYearlyWithK2 = "\\$([\\d.]+)K - \\$([\\d.]+)K \\(Glassdoor Est.\\)";
+                        String regexYearlyWithK3 = "\\$([\\d.]+)K \\(Glassdoor Est.\\)";
+                        String regexYearlyWithK4 = "\\$([\\d.]+)K \\(Employer Est.\\)";
+                        String regexPerhour =  "\\$([\\d.]+) - \\$([\\d.]+) Per hour \\(Employer Est.\\)";
+                        String regexPerhour2 =  "\\$([\\d.]+) - \\$([\\d.]+) Per hour \\(Glassdoor Est.\\)";
+
+                        if (jobSalary.matches(regexYearlyWithK) || jobSalary.matches(regexYearlyWithK2)) {
+                            if(jobSalary.matches(regexYearlyWithK)) {
+                                String lowerSalaryStr = jobSalary.replaceAll(regexYearlyWithK, "$1");
+                                String upperSalaryStr = jobSalary.replaceAll(regexYearlyWithK, "$2");
+
+                                minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
+                                maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 1000);
+                            } else {
+                                String lowerSalaryStr = jobSalary.replaceAll(regexYearlyWithK2, "$1");
+                                String upperSalaryStr = jobSalary.replaceAll(regexYearlyWithK2, "$2");
+
+                                minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
+                                maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 1000);
+                            }
+
+                        } else if (jobSalary.matches(regexYearlyWithK3) || jobSalary.matches(regexYearlyWithK4)) {
+                            if(jobSalary.matches(regexYearlyWithK3)) {
+                                String lowerSalaryStr = jobSalary.replaceAll(regexYearlyWithK3, "$1");
+
+                                minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
+                                maxSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
+                            } else {
+                                String lowerSalaryStr = jobSalary.replaceAll(regexYearlyWithK4, "$1");
+
+                                minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
+                                maxSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
+                            }
+
+                        } else if (jobSalary.matches(regexPerhour) || jobSalary.matches(regexPerhour2)) {
+                            if (jobSalary.matches(regexPerhour)) {
+                                String lowerSalaryStr = jobSalary.replaceAll(regexPerhour, "$1");
+                                String upperSalaryStr = jobSalary.replaceAll(regexPerhour, "$2");
+
+                                minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 40 * 4 * 12);
+                                maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 40 * 4 * 12);
+                            } else {
+                                String lowerSalaryStr = jobSalary.replaceAll(regexPerhour2, "$1");
+                                String upperSalaryStr = jobSalary.replaceAll(regexPerhour2, "$2");
+
+                                minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 40 * 4 * 12);
+                                maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 40 * 4 * 12);
+                            }
+
+                        }
+
+                        String jobDescription = pageDoc.select("div[class=JobDetails_jobDescription__6VeBn JobDetails_blurDescription__fRQYh]").text();
+
+
+
+                        Job job = new Job();
+                        job.setId(jobId);
+                        job.setJobTitle(jobTitle);
+                        job.setJobWebsiteName(jobWebsiteName);
+                        job.setCompanyName(jobCompanyName);
+                        job.setLocation(jobCompanyLocation);
+                        job.setJobDescription(jobDescription);
+                        job.setJobWebsiteLink(jobLink);
+                        job.setMinSalary(minSalary);
+                        job.setMaxSalary(maxSalary);
+
+
+                        if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
+//                            System.out.println("Is valid Job");
+                            uniqueJobs.add(job.getId());
+                            jobsCollection.add(job);
+                        }
+                        jobCounter++;
+                    } catch (Exception e) {
+                        jobCounter++;
+                        e.printStackTrace();
+                        System.out.println("Failed for Job: " + jobId);
+                    }
+
+                }
+            } catch (Exception e) {
+                jobCounter++;
+                e.printStackTrace();
             }
-
-
+            bot.saveAndAppendToJson(jobsCollection);
         }
-
-
-        String pageSource = scraperBot.getPageSource();
-        //scrapeWebPage will give us the scrapped data of the list of jobs in the pageSource
-        Collection<Job> validatedJobList = scrapeWebPage(pageSource);
-        //Append data to json database
-        bot.saveAndAppendToJson(validatedJobList);
     }
 
     public int scrapJobLinks(String pageSource, int liCount) {
@@ -84,9 +256,9 @@ public class GlassDoorScraper {
         Elements liElements = pageDoc.select("ul[class=JobsList_jobsList__Ey2Vo]>li");
         List<Element> updatedLiList = liElements.subList(liCount, liElements.size());
         for(Element liElement: updatedLiList) {
-            String jobWebsiteId = liElement.attr("data-jobid");
-            String jobWebsiteLink = "https://www.glassdoor.ca/job-listing?jl=" + jobWebsiteId;
-            jobLinksQueue.add(jobWebsiteLink);
+            Elements aLink = liElement.select("a[class=JobCard_seoLink__WdqHZ]");
+            String link = !aLink.isEmpty() ? aLink.get(0).attr("href"): "";
+            jobLinksQueue.add(link);
             liCount++;
         }
         return liCount;
@@ -103,86 +275,6 @@ public class GlassDoorScraper {
         WebElement passwordInput = scraperBot.findElement(By.xpath("//input[@id='inlineUserPassword']"));
         passwordInput.sendKeys("Test@123");
         passwordInput.sendKeys(Keys.ENTER);
-    }
-
-    public Collection<Job> scrapeWebPage(String pageSource) {
-        Collection<Job> jobList = new ArrayList<Job>();
-        Document pageDoc = Jsoup.parse(pageSource);
-        Elements liElements = pageDoc.select("[class=]>li");
-        int liCount = liElements.size();
-        System.out.println("liCOunt: " + liCount);
-        for (int liIterator = 0; liIterator < liCount; liIterator++) {
-            Job job = new Job();
-            Element liElement = liElements.get(liIterator);
-            String jobTitle = liElement.select("h2[data-testid=searchSerpJobTitle]").text();
-            String jobCompanyName = liElement.select("[data-testid=searchSerpJobLocation]").text();
-            String jobWebsiteName = "GlassDoor";
-            String jobWebsiteLink = liElement.select("h2[data-testid=searchSerpJobTitle] a").attr("href");
-
-            String jobSalary = liElement.select("p[data-testid=searchSerpJobSalaryEst]").text();
-            if(jobSalary == null) {
-                jobSalary = liElement.select("p[data-testid=searchSerpJobSalaryConfirmed]").text();
-            }
-            int minSalary = 0;
-            int maxSalary = 0;
-            String regexYearly = "\\$([\\d.]+)K - \\$([\\d.]+)K a year";
-            String regexHourly = "\\$([\\d.]+) - \\$([\\d.]+) an hour";
-            String regexHourlyFrom = "From \\\\$([\\\\d.]+) an hour";
-            String regexYearFrom = "\\$([\\d,]+) a year";
-            if (jobSalary.matches(regexYearly)) {
-                String lowerSalaryStr = jobSalary.replaceAll(regexYearly, "$1");
-                String upperSalaryStr = jobSalary.replaceAll(regexYearly, "$2");
-
-                minSalary = (int) (Double.parseDouble(lowerSalaryStr) * 1000);
-                maxSalary = (int) (Double.parseDouble(upperSalaryStr) * 1000);
-            } else if (jobSalary.matches(regexHourly)) {
-                String lowerSalaryStr = jobSalary.replaceAll(regexHourly, "$1");
-                String upperSalaryStr = jobSalary.replaceAll(regexHourly, "$2");
-
-                minSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*20*12);
-                maxSalary = (int) (Double.parseDouble(upperSalaryStr)*40*20*12);
-            } else if (jobSalary.matches(regexHourlyFrom)) {
-                String lowerSalaryStr = jobSalary.replaceAll(regexHourlyFrom, "$1");
-
-                // Convert to an integer
-                maxSalary = (int) (Double.parseDouble(lowerSalaryStr)*40*20*12);
-            } else if (jobSalary.matches(regexYearFrom)) {
-                String salaryStr = jobSalary.replaceAll(regexYearFrom, "$1").replace(",", "");
-
-                // Convert to an integer
-                maxSalary = Integer.parseInt(salaryStr);
-            } else {
-                minSalary = 0;
-                maxSalary = 0;
-            }
-
-            String jobDescription = liElement.select("p[data-testid=searchSerpJobSnippet]").text();
-
-            System.out.println(jobTitle + ", " + jobCompanyName + ", " + jobWebsiteLink + ", " + minSalary + ", " + maxSalary  + ", " + jobDescription);
-            String regex = "https://www.glassdoor\\.ca/job-listing\\?jl=(\\d+)";
-            Pattern pattern = Pattern.compile(regex);
-            // Match the pattern against the URL
-            Matcher matcher = pattern.matcher(jobWebsiteLink);
-            // Check if the pattern is found
-            if (matcher.find()) {
-                // Extract the job listing ID (group 1)
-                job.setId(matcher.group(1));
-            }
-            job.setJobTitle(jobTitle);
-            job.setCompanyName(jobCompanyName);
-            job.setJobWebsiteName(jobWebsiteName);
-            job.setJobWebsiteLink(jobWebsiteLink);
-            job.setMinSalary(minSalary);
-            job.setMaxSalary(maxSalary);
-            job.setLocation("Canada");
-            job.setJobDescription(jobDescription);
-
-            //Add Only the validated data to the jobList
-            if(DataValidation.validateDataForOneObject(job)){
-                jobList.add(job);
-            }
-        }
-        return jobList;
     }
 
     public static void main(String[] args) throws InterruptedException {
