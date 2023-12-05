@@ -46,7 +46,7 @@ public class JobDataTrie {
             "after", "above", "below", "to", "from", "up", "down", "in", "out", "on", "off", "over", "under", "again",
             "further", "then", "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each",
             "few", "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so", "than",
-            "too", "very", "s", "t", "can", "will", "just", "don", "should", "now", "d", "ll", "m", "o", "re", "ve", "y", "ain", "aren", "couldn", "didn", "doesn", "hadn", "hasn", "haven", "isn", "ma", "mightn", "mustn", "needn", "shan", "shouldn", "wasn", "weren", "won", "wouldn"
+            "too", "very", "s", "t", "can", "will", "just", "don", "should", "now", "d", "ll", "m", "o", "re", "ve", "y", "ain", "aren", "couldn", "didn", "doesn", "hadn", "hasn", "haven", "isn", "ma", "mightn", "mustn", "needn", "shan", "shouldn", "wasn", "weren", "won", "wouldn","ii"
     ));
 
     public JobDataTrie(SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper) {
@@ -86,15 +86,16 @@ public class JobDataTrie {
             String[] descriptionTokens = description.trim().split(" ");
 
             for(String token: descriptionTokens) {
-                if (!stopWords.contains(token.toLowerCase())) {
-                    String pattern = "[^a-zA-Z]+";
 
-                    Pattern regex = Pattern.compile(pattern);
+                String pattern = "[^a-zA-Z]+";
 
-                    Matcher matcher = regex.matcher(token);
+                Pattern regex = Pattern.compile(pattern);
 
-                    String processedString = matcher.replaceAll("").toLowerCase();
+                Matcher matcher = regex.matcher(token);
 
+                String processedString = matcher.replaceAll("").toLowerCase();
+
+                if (!stopWords.contains(processedString) && !processedString.isBlank()) {
                     jobsDataTrie.insertIntoTrie(processedString, id);
                 }
             }
