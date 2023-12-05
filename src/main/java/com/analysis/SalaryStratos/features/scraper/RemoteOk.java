@@ -41,7 +41,7 @@ public class RemoteOk {
                 WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("search")));
                 // Enter "React" into the input field
                 searchInput.sendKeys(title);
-                Thread.sleep(2000);
+                Thread.sleep(4000);
 
                 // Find the div element
                 WebElement filterResultsDiv = scraperBot.findElement(By.className("search-filter-results"));
