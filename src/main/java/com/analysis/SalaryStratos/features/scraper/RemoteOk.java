@@ -167,6 +167,7 @@ public class RemoteOk {
                 if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
                     uniqueJobs.add(job.getId());
                     jobList.add(job);
+                    System.out.println("Scrapped jobId : "+job.getId()+" successfully");
                 }
             }
 

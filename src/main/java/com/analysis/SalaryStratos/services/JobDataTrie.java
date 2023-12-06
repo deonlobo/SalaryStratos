@@ -71,7 +71,7 @@ public class JobDataTrie {
             jobs = gson.fromJson(new FileReader("src/main/resources/database.json"), Jobs.class);
         }
 
-        System.out.println("Job data loaded from json");
+        //System.out.println("Job data loaded from json");
 
         return (ArrayList<Job>) jobs.getJobs();
     }
@@ -79,6 +79,7 @@ public class JobDataTrie {
     public TrieDS initializeTrie() throws FileNotFoundException, InterruptedException {
         this.jobsDataTrie = new TrieDS();
         ArrayList<Job> jobsList = getJobsDataFromJson();
+        System.out.println("Job data loaded from json");
         for (Job job: jobsList) {
             String id = job.getId();
             String description = job.getJobDescription().replaceAll("\\\\n|\\n", " ").replaceAll(",","").replaceAll("\\.","");

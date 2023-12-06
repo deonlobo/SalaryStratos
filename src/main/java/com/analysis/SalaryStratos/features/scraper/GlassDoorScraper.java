@@ -55,7 +55,7 @@ public class GlassDoorScraper {
             liCount = scrapJobLinks(pageSource, liCount);
             int sameSize = 0;
             int jobSize = 0;
-            while (jobSize < 100) {
+            while (jobSize < 50) {
                 try {
 
                     try{
@@ -234,12 +234,13 @@ public class GlassDoorScraper {
 //                            System.out.println("Is valid Job");
                             uniqueJobs.add(job.getId());
                             jobsCollection.add(job);
+                            System.out.println("Scrapped jobId : "+job.getId()+" successfully");
                         }
                         jobCounter++;
                     } catch (Exception e) {
                         jobCounter++;
                         e.printStackTrace();
-                        System.out.println("Failed for Job: " + jobId);
+                        //System.out.println("Failed for Job: " + jobId);
                     }
 
                 }
