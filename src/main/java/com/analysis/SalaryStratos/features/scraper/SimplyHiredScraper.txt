@@ -32,7 +32,7 @@ public class SimplyHiredScraper {
                 scraperBot.get(websiteUrl + "/search?q=" + searchTerm);
                 String pageSource = scraperBot.getPageSource();
                 scrapJobLinks(pageSource, jobLinksQueue);
-                while (jobLinksQueue.size() < 50) {
+                while (jobLinksQueue.size() < 100) {
                     try {
                         String nextLink = scraperBot
                                 .findElement(By.xpath("//nav[@data-testid='pageNumberContainer']//span[@aria-current='true']"))
@@ -62,7 +62,6 @@ public class SimplyHiredScraper {
                     if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
                         uniqueJobs.add(job.getId());
                         jobsCollection.add(job);
-                        System.out.println("Scrapped jobId : "+job.getId()+" successfully");
                     }
                 }
                 bot.saveAndAppendToJson(jobsCollection);
@@ -186,7 +185,7 @@ public class SimplyHiredScraper {
             // Convert to an integer
             maxSalary = Integer.parseInt(salaryStr);
         } else {
-            //System.out.println("Failed For:" + jobSalary);
+            System.out.println("Failed For:" + jobSalary);
         }
 
         String jobDescription = pageDoc.select("div[data-testid=viewJobBodyJobFullDescriptionContent]").text();

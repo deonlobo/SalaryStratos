@@ -32,8 +32,7 @@ public class JobDataTrie {
     private final GlassDoorScraper glassDoorScraper;
     private TrieDS jobsDataTrie;
     String[] searchTermsList = new String[]{
-            "Engineer"
-//        "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Front End"
+            "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Front End"
     };
 
     // List of common English stop words
@@ -72,7 +71,7 @@ public class JobDataTrie {
             jobs = gson.fromJson(new FileReader("src/main/resources/database.json"), Jobs.class);
         }
 
-        //System.out.println("Job data loaded from json");
+        System.out.println("Job data loaded from json");
 
         return (ArrayList<Job>) jobs.getJobs();
     }
@@ -80,7 +79,6 @@ public class JobDataTrie {
     public TrieDS initializeTrie() throws FileNotFoundException, InterruptedException {
         this.jobsDataTrie = new TrieDS();
         ArrayList<Job> jobsList = getJobsDataFromJson();
-        System.out.println("Job data loaded from json");
         for (Job job: jobsList) {
             String id = job.getId();
             String description = job.getJobDescription().replaceAll("\\\\n|\\n", " ").replaceAll(",","").replaceAll("\\.","");

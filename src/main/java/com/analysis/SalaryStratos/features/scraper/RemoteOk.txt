@@ -41,7 +41,7 @@ public class RemoteOk {
                 WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("search")));
                 // Enter "React" into the input field
                 searchInput.sendKeys(title);
-                Thread.sleep(4000);
+                Thread.sleep(2000);
 
                 // Find the div element
                 WebElement filterResultsDiv = scraperBot.findElement(By.className("search-filter-results"));
@@ -58,6 +58,7 @@ public class RemoteOk {
                 Thread.sleep(2000);
                 // Print the source code of the new website
                 String pageSource = scraperBot.getPageSource();
+
 
                 //System.out.println("Page Source:\n" + pageSource);
                 Collection<Job> validatedJobList = scrapeWebPage(pageSource,uniqueJobs);
@@ -166,7 +167,6 @@ public class RemoteOk {
                 if(DataValidation.validateDataForOneObject(job) && !uniqueJobs.contains(job.getId())){
                     uniqueJobs.add(job.getId());
                     jobList.add(job);
-                    System.out.println("Scrapped jobId : "+job.getId()+" successfully");
                 }
             }
 
