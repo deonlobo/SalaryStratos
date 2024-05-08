@@ -42,11 +42,7 @@ public class PageRanking {
                         sortedJobs.insert(jobById);
 
                     }
-
-
-
                 }
-
             }
         }
 

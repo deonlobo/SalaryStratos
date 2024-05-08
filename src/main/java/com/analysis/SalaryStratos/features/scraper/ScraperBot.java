@@ -28,7 +28,7 @@ public class ScraperBot {
 
 
     private void initializeScraperBot() {
-        WebDriverManager.chromedriver().browserVersion("77.0.3865.40").setup();
+        WebDriverManager.chromedriver().browserVersion("119.0.6045.200").setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("start-maximized");
         options.addArguments("enable-automation");
@@ -45,8 +45,10 @@ public class ScraperBot {
 
     public static ScraperBot getScraperBot() {
         if (bot == null) {
+            System.out.println("Bot loaded for first time");
             bot = new ScraperBot();
         }
+        System.out.println("Bot from already created instance");
         return bot;
     }
 
@@ -56,25 +58,6 @@ public class ScraperBot {
 
     public  Queue<String> getJobLinksQueue() {
         return  this.jobLinksQueue;
-    }
-
-    public void saveToJson(Collection<Job> jobs) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Jobs jobsList = new Jobs();
-        jobsList.setJobs(jobs);
-        // Convert the userData object to a JSON string
-        String json = gson.toJson(jobsList);
-
-        String path = "src/main/resources/database.json";
-
-        try (FileWriter writer = new FileWriter(path)) {
-            // Attempt to write the JSON string to the specified file
-            try (PrintWriter printWriter = new PrintWriter(writer)) {
-                printWriter.println(json);
-            }
-        } catch (IOException e) {
-            System.out.println("Error While Saving.");
-        }
     }
 
     public WebDriverWait getScraperBotWithWait(WebDriver driver) {

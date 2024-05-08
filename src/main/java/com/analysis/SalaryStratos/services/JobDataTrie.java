@@ -30,14 +30,15 @@ public class JobDataTrie {
     private final Gson jsonHandler = new Gson();
 
 
-    private final TrieDS jobsDataTrie = new TrieDS();
+    private TrieDS jobsDataTrie;
 
 
 //    public ArrayList<Job> getJobsList() {
 //        return jobsList;
 //    }
     String[] searchTermsList = new String[]{
-            "Engineer", "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Front End"
+            "Engineer"
+//        "Exec", "Senior", "Developer", "Finance", "Sys Admin", "JavaScript", "Backend", "Golang", "Cloud", "Front End"
     };
 
     public JobDataTrie(SimplyHiredScraper simplyHiredScraper, RemoteOk remoteOk, GlassDoorScraper glassDoorScraper) {
@@ -55,9 +56,9 @@ public class JobDataTrie {
             jobs = gson.fromJson(new FileReader("src/main/resources/database.json"), Jobs.class);
         } catch (FileNotFoundException e) {
             //File doesnt exist
-            simplyHiredScraper.crawlWebPage(searchTermsList);
+//            simplyHiredScraper.crawlWebPage(searchTermsList);
             remoteOk.crawlRemoteOk(searchTermsList);
-            glassDoorScraper.crawlWebPage(searchTermsList);
+//            glassDoorScraper.crawlWebPage(searchTermsList);
             jobs = gson.fromJson(new FileReader("src/main/resources/database.json"), Jobs.class);
         }
 
@@ -67,6 +68,7 @@ public class JobDataTrie {
     }
 
     public TrieDS initializeTrie() throws FileNotFoundException, InterruptedException {
+        this.jobsDataTrie = new TrieDS();
         ArrayList<Job> jobsList = getJobsDataFromJson();
         for (Job job: jobsList) {
             String id = job.getId();

@@ -69,7 +69,8 @@ public class SimplyHiredScraper {
             bot.saveAndAppendToJson(jobsCollection);
         }
 
-//        scrapeWebPage(pageSource);
+
+        scraperBot.close();
 
 
     }

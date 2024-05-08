@@ -1,6 +1,7 @@
 package com.analysis.SalaryStratos.controllers;
 
 import com.analysis.SalaryStratos.dataStructures.array.SortedArray;
+import com.analysis.SalaryStratos.dataStructures.trie.TrieDS;
 import com.analysis.SalaryStratos.models.WordFrequency;
 import com.analysis.SalaryStratos.features.*;
 import com.analysis.SalaryStratos.features.scraper.GlassDoorScraper;
@@ -125,7 +126,7 @@ public class FeatureController {
     @CrossOrigin
     @PostMapping(value = "/crawl")
     @ResponseBody
-    public Boolean crawlData(@RequestBody CrawlerRequest crawlerRequest) throws InterruptedException {
+    public Boolean crawlData(@RequestBody CrawlerRequest crawlerRequest) throws InterruptedException, FileNotFoundException {
         System.out.println(Arrays.toString(crawlerRequest.getSearchTerms()));
         System.out.println(crawlerRequest.isSimplyHired());
         //If delete is true then delete the file and create new one
@@ -146,14 +147,24 @@ public class FeatureController {
 
         String[] searchTerms = getSearchTerms(crawlerRequest);
 
-        if(simplyHiredBoolean)
+        if(simplyHiredBoolean) {
+            System.out.println("SimplyHired Crawling Started");
             simplyHiredScraper.crawlWebPage(searchTerms);
-        if(remoteOkBoolean)
+            System.out.println("SimplyHired Crawling Ended");
+        }
+        if(remoteOkBoolean) {
+            System.out.println("RemoteOk Crawling Started");
             remoteOk.crawlRemoteOk(searchTerms);
-        if(glassDoorBoolean)
+            System.out.println("RemoteOk Crawling Ended");
+        }
+        if(glassDoorBoolean) {
+            System.out.println("Glassdoor Crawling Started");
             glassDoorScraper.crawlWebPage(searchTerms);
+            System.out.println("Glassdoor Crawling Ended");
+        }
 
-        
+        TrieDS trie = jobData.initializeTrie();
+        spellChecker.initializeSpellChecker(trie);
         return true;
     }
 
